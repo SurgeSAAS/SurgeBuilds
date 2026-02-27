@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop With Luca</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Darker+Grotesque:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --white: #FFFFFF;
+  --off: #F5F4F0;
+  --black: #0A0A0A;
+  --mid: #555;
+  --light: #AAA;
+  --border: #E0E0E0;
+  --red: #FF2020;
+  --accent: #0A0A0A;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'Darker Grotesque',sans-serif; background:var(--white); color:var(--black); overflow-x:hidden; cursor:none; }
+
+/* CURSOR */
+.cursor { position:fixed; width:12px; height:12px; background:var(--black); border-radius:50%; pointer-events:none; z-index:99999; transform:translate(-50%,-50%); transition:width 0.2s,height 0.2s,background 0.2s; mix-blend-mode:difference; }
+.cursor.big { width:40px; height:40px; }
+
+/* WEB BACKGROUND */
+.web-bg {
+  position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.03;
+  background-image: 
+    radial-gradient(circle at 20% 20%, transparent 60px, #000 61px, #000 62px, transparent 63px),
+    radial-gradient(circle at 80% 80%, transparent 60px, #000 61px, #000 62px, transparent 63px),
+    radial-gradient(circle at 50% 50%, transparent 100px, #000 101px, #000 102px, transparent 103px);
+}
+
+/* ── WELCOME SCREEN ── */
+#welcome {
+  position:fixed; inset:0; background:var(--black); z-index:1000;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:none;
+}
+
+.welcome-web {
+  position:absolute; inset:0; overflow:hidden; opacity:0.15;
+}
+
+.welcome-web svg { width:100%; height:100%; }
+
+.welcome-content { position:relative; z-index:2; text-align:center; }
+
+.welcome-eyebrow {
+  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.4em;
+  color:rgba(255,255,255,0.4); text-transform:uppercase; margin-bottom:20px;
+  animation: fadeUp 0.8s ease 0.2s both;
+}
+
+.welcome-title {
+  font-family:'Bebas Neue',sans-serif; font-size:clamp(80px,15vw,180px);
+  color:white; line-height:0.9; letter-spacing:0.02em;
+  animation: fadeUp 0.8s ease 0.4s both;
+}
+
+.welcome-title span { color:var(--red); }
+
+.welcome-location {
+  font-size:13px; font-weight:600; letter-spacing:0.25em; text-transform:uppercase;
+  color:rgba(255,255,255,0.5); margin-top:16px;
+  animation: fadeUp 0.8s ease 0.6s both;
+}
+
+.reviews-ticker {
+  margin-top:48px; overflow:hidden; width:500px; max-width:90vw;
+  animation: fadeUp 0.8s ease 0.8s both;
+}
+
+.review-slide {
+  text-align:center; color:rgba(255,255,255,0.6); font-size:15px;
+  font-weight:500; line-height:1.5; font-style:italic; min-height:44px;
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity 0.5s;
+}
+
+.welcome-stars { color:var(--red); font-size:14px; letter-spacing:2px; margin-bottom:6px; }
+
+.enter-btn {
+  margin-top:40px; display:inline-block;
+  border:1px solid rgba(255,255,255,0.3); color:white;
+  padding:14px 48px; font-family:'Darker Grotesque',sans-serif;
+  font-size:13px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase;
+  cursor:none; transition:all 0.3s; position:relative; overflow:hidden;
+  animation: fadeUp 0.8s ease 1s both;
+  background:transparent;
+}
+.enter-btn::before { content:''; position:absolute; inset:0; background:white; transform:translateX(-100%); transition:transform 0.3s; z-index:-1; }
+.enter-btn:hover { color:var(--black); border-color:white; }
+.enter-btn:hover::before { transform:translateX(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── MAIN SITE ── */
+#site { display:none; position:relative; z-index:1; }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  background:rgba(255,255,255,0.95); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px; height:60px;
+}
+
+.nav-logo {
+  font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:0.08em;
+  color:var(--black); cursor:none;
+}
+
+.nav-links { display:flex; gap:32px; align-items:center; }
+
+.nav-link {
+  font-size:12px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
+  color:var(--mid); text-decoration:none; cursor:none; transition:color 0.2s;
+  background:none; border:none;
+}
+.nav-link:hover, .nav-link.active { color:var(--black); }
+
+.cart-btn {
+  position:relative; font-size:12px; font-weight:700; letter-spacing:0.15em;
+  text-transform:uppercase; color:var(--black); background:var(--black);
+  color:white; border:none; padding:8px 18px; cursor:none; transition:opacity 0.2s;
+}
+.cart-btn:hover { opacity:0.8; }
+
+.cart-count {
+  position:absolute; top:-6px; right:-6px; background:var(--red);
+  color:white; width:18px; height:18px; border-radius:50%;
+  font-size:10px; display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono',monospace;
+}
+
+/* PAGES */
+.page { display:none; padding-top:60px; min-height:100vh; }
+.page.active { display:block; }
+
+/* ── SHOP PAGE ── */
+#page-shop {}
+
+.shop-hero {
+  padding:60px 40px 40px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:flex-end; justify-content:space-between;
+}
+
+.shop-hero-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(60px,10vw,120px);
+  line-height:0.9; letter-spacing:0.02em;
+}
+
+.shop-hero-title span { color:var(--red); }
+
+.shop-hero-right { text-align:right; }
+
+.shop-hero-sub {
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:0.2em; color:var(--light); text-transform:uppercase;
+  margin-bottom:16px;
+}
+
+/* FILTERS */
+.filters {
+  padding:16px 40px; border-bottom:1px solid var(--border);
+  display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+}
+
+.filter-label {
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em;
+  color:var(--light); text-transform:uppercase; margin-right:8px;
+}
+
+.filter-btn {
+  padding:6px 14px; border:1px solid var(--border); background:transparent;
+  font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; cursor:none;
+  transition:all 0.2s; color:var(--mid);
+}
+.filter-btn:hover { border-color:var(--black); color:var(--black); }
+.filter-btn.active { background:var(--black); color:white; border-color:var(--black); }
+
+/* PRODUCT GRID */
+.product-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  border-left:1px solid var(--border);
+}
+
+.product-card {
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  cursor:none; transition:background 0.2s;
+  animation:fadeUp 0.5s ease both;
+}
+.product-card:hover { background:var(--off); }
+
+.product-img {
+  aspect-ratio:1; background:var(--off);
+  display:flex; align-items:center; justify-content:center;
+  font-size:80px; border-bottom:1px solid var(--border);
+  position:relative; overflow:hidden; transition:background 0.2s;
+}
+.product-card:hover .product-img { background:#ECEAE4; }
+
+.product-badge {
+  position:absolute; top:12px; left:12px;
+  font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.15em;
+  text-transform:uppercase; padding:3px 8px;
+}
+.badge-limited { background:var(--red); color:white; }
+.badge-brand { background:var(--black); color:white; }
+
+.product-info { padding:16px 20px 20px; }
+.product-brand { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--light); text-transform:uppercase; margin-bottom:4px; }
+.product-name { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.05em; line-height:1.1; margin-bottom:4px; }
+.product-category { font-size:11px; color:var(--mid); font-weight:500; margin-bottom:12px; }
+.product-footer { display:flex; align-items:center; justify-content:space-between; }
+.product-price { font-family:'DM Mono',monospace; font-size:16px; font-weight:400; }
+.add-cart-btn {
+  background:var(--black); color:white; border:none;
+  padding:8px 14px; font-family:'Darker Grotesque',sans-serif;
+  font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+  cursor:none; transition:background 0.2s;
+}
+.add-cart-btn:hover { background:#333; }
+
+.empty-grid {
+  grid-column:1/-1; padding:80px; text-align:center;
+  color:var(--light); font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.2em;
+}
+
+/* ── PRODUCT MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(10,10,10,0.7);
+  z-index:800; display:none; align-items:center; justify-content:center;
+  backdrop-filter:blur(8px); cursor:none;
+}
+.modal-overlay.open { display:flex; }
+
+.product-modal {
+  background:white; width:840px; max-width:95vw; max-height:90vh;
+  display:grid; grid-template-columns:1fr 1fr; overflow:hidden;
+  animation:modalIn 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes modalIn { from{opacity:0;transform:scale(0.94)} to{opacity:1;transform:scale(1)} }
+
+.modal-img {
+  background:var(--off); display:flex; align-items:center; justify-content:center;
+  font-size:140px; border-right:1px solid var(--border); position:relative; min-height:400px;
+}
+
+.modal-content { padding:40px; display:flex; flex-direction:column; overflow-y:auto; }
+.modal-close { align-self:flex-end; background:none; border:1px solid var(--border); width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:14px; cursor:none; margin-bottom:24px; transition:all 0.2s; }
+.modal-close:hover { background:var(--black); color:white; border-color:var(--black); }
+.modal-brand { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.25em; color:var(--light); text-transform:uppercase; margin-bottom:6px; }
+.modal-name { font-family:'Bebas Neue',sans-serif; font-size:40px; letter-spacing:0.03em; line-height:1; margin-bottom:4px; }
+.modal-cat { font-size:13px; color:var(--mid); font-weight:500; margin-bottom:20px; }
+.modal-price { font-family:'DM Mono',monospace; font-size:28px; margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+.modal-section-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--light); text-transform:uppercase; margin-bottom:10px; }
+.sizes-wrap { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:24px; }
+.size-tag { padding:6px 12px; border:1px solid var(--border); font-family:'DM Mono',monospace; font-size:11px; color:var(--mid); }
+.modal-desc { font-size:14px; color:var(--mid); line-height:1.6; font-weight:400; margin-bottom:24px; flex:1; }
+
+.limited-notice { background:#FFF5F5; border:1px solid #FFD0D0; padding:10px 14px; font-size:12px; color:var(--red); font-weight:600; margin-bottom:20px; display:none; }
+.limited-notice.show { display:block; }
+
+.btn-purchase { width:100%; padding:16px; background:var(--black); color:white; border:none; font-family:'Darker Grotesque',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; cursor:none; transition:background 0.2s; }
+.btn-purchase:hover { background:#222; }
+.btn-add-cart { width:100%; padding:14px; background:transparent; color:var(--black); border:1px solid var(--border); font-family:'Darker Grotesque',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; cursor:none; transition:all 0.2s; margin-top:8px; }
+.btn-add-cart:hover { background:var(--off); }
+
+/* PURCHASE MODAL */
+.purchase-modal { background:white; width:480px; max-width:95vw; padding:48px; animation:modalIn 0.3s ease; }
+.purchase-title { font-family:'Bebas Neue',sans-serif; font-size:36px; margin-bottom:8px; }
+.purchase-sub { font-size:14px; color:var(--mid); margin-bottom:32px; line-height:1.5; }
+.contact-methods { display:flex; flex-direction:column; gap:12px; margin-bottom:28px; }
+.contact-method { display:flex; align-items:center; gap:16px; padding:16px; border:1px solid var(--border); transition:background 0.2s; text-decoration:none; color:var(--black); cursor:none; }
+.contact-method:hover { background:var(--off); }
+.contact-icon { font-size:24px; flex-shrink:0; }
+.contact-info {}
+.contact-type { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--light); text-transform:uppercase; margin-bottom:2px; }
+.contact-handle { font-size:16px; font-weight:700; }
+.payment-note { background:var(--off); padding:14px; font-size:12px; color:var(--mid); line-height:1.6; border-left:3px solid var(--black); }
+
+/* ── CART DRAWER ── */
+.cart-drawer {
+  position:fixed; right:0; top:0; bottom:0; width:400px;
+  background:white; border-left:1px solid var(--border);
+  z-index:700; transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.16,1,0.3,1);
+  display:flex; flex-direction:column;
+}
+.cart-drawer.open { transform:translateX(0); }
+
+.cart-header { padding:24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.cart-title { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.05em; }
+.cart-close { background:none; border:1px solid var(--border); width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:none; transition:all 0.2s; }
+.cart-close:hover { background:var(--black); color:white; }
+
+.cart-items { flex:1; overflow-y:auto; padding:0; }
+.cart-item { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; gap:16px; align-items:flex-start; }
+.cart-item-emoji { font-size:32px; flex-shrink:0; }
+.cart-item-info { flex:1; }
+.cart-item-name { font-weight:700; font-size:14px; margin-bottom:2px; }
+.cart-item-brand { font-family:'DM Mono',monospace; font-size:9px; color:var(--light); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:4px; }
+.cart-item-price { font-family:'DM Mono',monospace; font-size:13px; }
+.cart-remove { background:none; border:none; color:var(--light); cursor:none; font-size:16px; transition:color 0.2s; margin-top:2px; }
+.cart-remove:hover { color:var(--red); }
+
+.cart-empty { padding:60px 24px; text-align:center; color:var(--light); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.15em; }
+
+.cart-footer { padding:24px; border-top:1px solid var(--border); }
+.cart-total { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.cart-total-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.2em; color:var(--light); text-transform:uppercase; }
+.cart-total-value { font-family:'DM Mono',monospace; font-size:20px; }
+.cart-checkout-btn { width:100%; padding:16px; background:var(--black); color:white; border:none; font-family:'Darker Grotesque',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; cursor:none; transition:background 0.2s; }
+.cart-checkout-btn:hover { background:#222; }
+.cart-pay-note { font-size:11px; color:var(--light); text-align:center; margin-top:10px; font-family:'DM Mono',monospace; letter-spacing:0.1em; }
+
+/* ── CONTACT PAGE ── */
+#page-contact { padding:100px 40px 80px; }
+.contact-hero-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(60px,10vw,120px); line-height:0.9; margin-bottom:8px; }
+.contact-hero-sub { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.25em; color:var(--light); text-transform:uppercase; margin-bottom:60px; }
+
+.contact-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); max-width:800px; }
+.contact-card { background:white; padding:32px; transition:background 0.2s; cursor:none; text-decoration:none; color:var(--black); display:block; }
+.contact-card:hover { background:var(--off); }
+.contact-card-icon { font-size:36px; margin-bottom:16px; }
+.contact-card-type { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--light); text-transform:uppercase; margin-bottom:6px; }
+.contact-card-handle { font-size:20px; font-weight:800; }
+
+/* ── REQUESTS PAGE ── */
+#page-requests { padding:100px 40px 80px; max-width:700px; }
+.requests-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(60px,8vw,100px); line-height:0.9; margin-bottom:8px; }
+.requests-sub { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.25em; color:var(--light); text-transform:uppercase; margin-bottom:16px; }
+.requests-desc { font-size:16px; color:var(--mid); line-height:1.6; margin-bottom:48px; max-width:500px; }
+
+.request-form { display:flex; flex-direction:column; gap:20px; }
+.form-group { display:flex; flex-direction:column; gap:8px; }
+.form-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--mid); text-transform:uppercase; }
+.form-input { background:var(--off); border:1px solid var(--border); padding:14px 16px; font-family:'Darker Grotesque',sans-serif; font-size:15px; outline:none; transition:border-color 0.2s; color:var(--black); }
+.form-input:focus { border-color:var(--black); background:white; }
+.form-input::placeholder { color:var(--light); }
+textarea.form-input { min-height:120px; resize:vertical; }
+.submit-btn { background:var(--black); color:white; border:none; padding:16px; font-family:'Darker Grotesque',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; cursor:none; transition:background 0.2s; width:fit-content; padding:14px 40px; }
+.submit-btn:hover { background:#222; }
+.submit-success { background:var(--off); border:1px solid var(--border); border-left:3px solid var(--black); padding:20px 24px; font-size:14px; color:var(--mid); display:none; }
+.submit-success.show { display:block; }
+
+/* LOADING */
+.loading-grid { grid-column:1/-1; padding:60px; text-align:center; color:var(--light); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.2em; }
+
+/* TICKER */
+.ticker-bar { background:var(--black); padding:10px 0; overflow:hidden; }
+.ticker-inner { display:flex; gap:40px; animation:ticker 20s linear infinite; white-space:nowrap; }
+.ticker-item { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.2em; color:rgba(255,255,255,0.5); flex-shrink:0; }
+.ticker-item span { color:var(--red); margin-right:8px; }
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* TOAST */
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--black); color:white; padding:12px 24px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.15em; z-index:9999; transition:transform 0.3s; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- WELCOME SCREEN -->
+<div id="welcome">
+  <div class="welcome-web">
+    <svg viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <circle cx="720" cy="450" r="400" stroke="white" stroke-width="0.5"/>
+      <circle cx="720" cy="450" r="280" stroke="white" stroke-width="0.5"/>
+      <circle cx="720" cy="450" r="160" stroke="white" stroke-width="0.5"/>
+      <line x1="0" y1="450" x2="1440" y2="450" stroke="white" stroke-width="0.5"/>
+      <line x1="720" y1="0" x2="720" y2="900" stroke="white" stroke-width="0.5"/>
+      <line x1="320" y1="50" x2="720" y2="450" stroke="white" stroke-width="0.3"/>
+      <line x1="1120" y1="50" x2="720" y2="450" stroke="white" stroke-width="0.3"/>
+      <line x1="320" y1="850" x2="720" y2="450" stroke="white" stroke-width="0.3"/>
+      <line x1="1120" y1="850" x2="720" y2="450" stroke="white" stroke-width="0.3"/>
+      <line x1="120" y1="200" x2="720" y2="450" stroke="white" stroke-width="0.2"/>
+      <line x1="1320" y1="200" x2="720" y2="450" stroke="white" stroke-width="0.2"/>
+      <line x1="120" y1="700" x2="720" y2="450" stroke="white" stroke-width="0.2"/>
+      <line x1="1320" y1="700" x2="720" y2="450" stroke="white" stroke-width="0.2"/>
+      <circle cx="720" cy="450" r="8" fill="white" opacity="0.6"/>
+    </svg>
+  </div>
+  <div class="welcome-content">
+    <div class="welcome-eyebrow">Massachusetts · Est. 2024</div>
+    <div class="welcome-title">Shop<br>With<br><span>Luca</span></div>
+    <div class="welcome-location">Massachusetts' Most Trusted Vendor</div>
+    <div class="reviews-ticker">
+      <div class="welcome-stars">★★★★★</div>
+      <div class="review-slide" id="review-text">"Loading reviews..."</div>
+    </div>
+    <button class="enter-btn" onclick="enterSite()">Enter Shop</button>
+  </div>
+</div>
+
+<!-- MAIN SITE -->
+<div id="site">
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo" onclick="showPage('shop')">Shop With Luca</div>
+    <div class="nav-links">
+      <button class="nav-link active" onclick="showPage('shop')" id="nav-shop">Shop</button>
+      <button class="nav-link" onclick="showPage('contact')" id="nav-contact">Contact</button>
+      <button class="nav-link" onclick="showPage('requests')" id="nav-requests">Custom Requests</button>
+      <button class="cart-btn" onclick="toggleCart()">
+        Cart <span class="cart-count" id="cart-count">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- TICKER -->
+  <div class="ticker-bar" style="margin-top:60px">
+    <div class="ticker-inner" id="ticker"></div>
+  </div>
+
+  <!-- SHOP PAGE -->
+  <div class="page active" id="page-shop">
+    <div class="shop-hero">
+      <div class="shop-hero-title">Shop<br>With <span>Luca</span></div>
+      <div class="shop-hero-right">
+        <div class="shop-hero-sub">Massachusetts · Pay on Delivery</div>
+      </div>
+    </div>
+    <div class="filters" id="filters">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" onclick="filterBy('all',this)" data-filter="all">All</button>
+    </div>
+    <div class="product-grid" id="product-grid">
+      <div class="loading-grid">Loading listings...</div>
+    </div>
+  </div>
+
+  <!-- CONTACT PAGE -->
+  <div class="page" id="page-contact">
+    <div class="contact-hero-title">Get In<br>Touch</div>
+    <div class="contact-hero-sub">// reach out to place an order or ask questions</div>
+    <div class="contact-grid">
+      <a class="contact-card" href="https://snapchat.com/add/lucasneakers" target="_blank">
+        <div class="contact-card-icon">👻</div>
+        <div class="contact-card-type">Snapchat</div>
+        <div class="contact-card-handle">@lucasneakers</div>
+      </a>
+      <a class="contact-card" href="https://instagram.com/lucasneakers" target="_blank">
+        <div class="contact-card-icon">📸</div>
+        <div class="contact-card-type">Instagram</div>
+        <div class="contact-card-handle">@lucasneakers</div>
+      </a>
+      <a class="contact-card" href="tel:+15550000000">
+        <div class="contact-card-icon">📱</div>
+        <div class="contact-card-type">Phone / Text</div>
+        <div class="contact-card-handle">DM for number</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- REQUESTS PAGE -->
+  <div class="page" id="page-requests">
+    <div class="requests-title">Custom<br>Request</div>
+    <div class="requests-sub">// tell luca what you want</div>
+    <div class="requests-desc">Can't find what you're looking for? Let Luca know what you want and he'll see if he can source it for you. Sneakers, apparel, accessories — just ask.</div>
+    <form class="request-form" onsubmit="submitRequest(event)">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input type="text" class="form-input" id="req-name" placeholder="First name is fine" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Snapchat or Instagram</label>
+        <input type="text" class="form-input" id="req-contact" placeholder="@yourhandle" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">What do you want?</label>
+        <textarea class="form-input" id="req-item" placeholder="e.g. Travis Scott Jordan 1 Low in size 10, Chrome Hearts hoodie in L..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Budget (optional)</label>
+        <input type="text" class="form-input" id="req-budget" placeholder="e.g. under $500">
+      </div>
+      <button type="submit" class="submit-btn">Send Request</button>
+    </form>
+    <div class="submit-success" id="req-success">
+      ✓ Request sent! Luca will reach out to you on Snapchat or Instagram within 24 hours.
+    </div>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <div class="cart-title">Your Cart</div>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty">YOUR CART IS EMPTY</div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <div class="cart-total-label">Total</div>
+      <div class="cart-total-value" id="cart-total">$0</div>
+    </div>
+    <button class="cart-checkout-btn" onclick="openCheckout()">Place Order</button>
+    <div class="cart-pay-note">Pay in person or on delivery</div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="product-modal" onclick="closeProductModal(event)">
+  <div class="product-modal">
+    <div class="modal-img" id="modal-img">
+      <span id="modal-emoji" style="font-size:140px"></span>
+      <div class="product-badge badge-brand" id="modal-badge-brand"></div>
+    </div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-brand" id="modal-brand"></div>
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-cat" id="modal-cat"></div>
+      <div class="modal-price" id="modal-price"></div>
+      <div class="limited-notice" id="modal-limited">⚡ Limited Quantity — Get it fast</div>
+      <div class="modal-section-label">Available Sizes</div>
+      <div class="sizes-wrap" id="modal-sizes"></div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <button class="btn-purchase" onclick="openPurchaseFromModal()">Purchase — Pay on Delivery</button>
+      <button class="btn-add-cart" onclick="addToCartFromModal()">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<!-- PURCHASE MODAL -->
+<div class="modal-overlay" id="purchase-modal" onclick="closePurchaseModal(event)">
+  <div class="purchase-modal">
+    <button class="modal-close" style="margin-left:auto;display:flex;margin-bottom:20px" onclick="closePurchaseModalBtn()">✕</button>
+    <div class="purchase-title">Ready to Order?</div>
+    <div class="purchase-sub">All orders are paid in person or upon delivery. Reach out to Luca on Snapchat or Instagram to arrange pickup or delivery.</div>
+    <div class="contact-methods">
+      <a class="contact-method" href="https://snapchat.com/add/lucasneakers" target="_blank">
+        <div class="contact-icon">👻</div>
+        <div class="contact-info"><div class="contact-type">Snapchat</div><div class="contact-handle">@lucasneakers</div></div>
+      </a>
+      <a class="contact-method" href="https://instagram.com/lucasneakers" target="_blank">
+        <div class="contact-icon">📸</div>
+        <div class="contact-info"><div class="contact-type">Instagram</div><div class="contact-handle">@lucasneakers</div></div>
+      </a>
+    </div>
+    <div class="payment-note">💬 DM Luca with what you want and he'll sort out the details. Payment is cash, Venmo, or Cash App — all on delivery or pickup.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient('https://zvrypvsndhkirxockflg.supabase.co','sb_publishable_phRSB9e426qhCCHJ_WEpVg_W_Y2IYwC');
+
+// ── CURSOR
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => { cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
+document.addEventListener('mouseover', e => { cursor.classList.toggle('big', !!e.target.closest('button,a,.product-card,.filter-btn')); });
+
+// ── REVIEWS
+const reviews = [
+  "Got me what I needed fast and payment was easy",
+  "Legit seller, no cap. Will be back for sure",
+  "Had my Jordan 1s in hand same week, crazy fast",
+  "Best reseller in Mass, period",
+  "Super easy to work with, great communication",
+  "Prices are fair and everything came authentic",
+  "Got a Chrome Hearts hoodie for way less than retail",
+  "Snapchatted Luca and had my order sorted in an hour",
+  "Never had an issue, always comes through",
+  "Only person I trust for sneakers in Massachusetts",
+  "Fast, reliable, real deal. 5 stars every time",
+  "Got exactly what I asked for, no stress",
+  "Payment on delivery is a huge plus, super trustworthy",
+  "Found stuff here I couldn't find anywhere else",
+  "Luca always delivers, literally and figuratively",
+  "Third time buying, never disappointed",
+  "Rare finds at good prices, this guy is plugged in",
+  "Easy process start to finish, highly recommend",
+  "Got my Yeezys before the hype died down, thank you",
+  "Solid plug, real sneakerhead energy",
+  "No sketchy stuff, straight up legit seller",
+  "Quick replies and fast turnaround, love it",
+  "Hooked me up with a pair I was hunting for months",
+  "Came through on a tight timeline, respect",
+  "Great seller, even better person to deal with",
+  "Found my grail here, honestly didn't expect that",
+  "Smooth transaction, zero problems",
+  "The SP5der hoodie I got is fire, worth every penny",
+  "Will always come here first before checking StockX",
+  "Authenticated items, no fakes, no games",
+  "Got my AJ11s delivered same day, insane service",
+  "Luca knows his stuff, good dude to buy from",
+  "Easy communication, fast delivery, perfect condition",
+  "Running back for the Nike SB collab, already told my boys",
+  "Real customer service energy, not just some random reseller",
+  "Told my whole friend group about this guy",
+  "Saved me like $200 compared to GOAT prices",
+  "Trusted vendor, been buying for over a year now",
+  "Delivered to my door in 2 days, no cap",
+  "Hooked me up with a bundle deal too, guy is solid",
+  "Everything was deadstock DS, exactly as described",
+  "Best experience I've had buying sneakers online",
+  "Luca came through when nobody else had the size",
+  "Communication on point, delivered on time",
+  "Finally a local plug that's actually reliable",
+  "Prices are competitive and service is next level",
+  "Got a limited pair I thought was sold out everywhere",
+  "Smooth process, no drama, would buy again",
+  "Massachusetts needs more sellers like this",
+  "Real talk the best sneaker experience I've had"
+];
+
+let reviewIdx = 0;
+function cycleReview() {
+  const el = document.getElementById('review-text');
+  el.style.opacity = 0;
+  setTimeout(() => {
+    reviewIdx = Math.floor(Math.random() * reviews.length);
+    el.textContent = '"' + reviews[reviewIdx] + '"';
+    el.style.opacity = 1;
+  }, 500);
+}
+setInterval(cycleReview, 3000);
+setTimeout(() => { document.getElementById('review-text').textContent = '"' + reviews[0] + '"'; }, 100);
+
+// ── WELCOME
+function enterSite() {
+  localStorage.setItem('swl_visited','1');
+  document.getElementById('welcome').style.opacity = 0;
+  document.getElementById('welcome').style.transition = 'opacity 0.6s';
+  setTimeout(() => {
+    document.getElementById('welcome').style.display = 'none';
+    document.getElementById('site').style.display = 'block';
+    loadListings();
+  }, 600);
+}
+
+window.addEventListener('load', () => {
+  if (localStorage.getItem('swl_visited')) {
+    document.getElementById('welcome').style.display = 'none';
+    document.getElementById('site').style.display = 'block';
+    loadListings();
+  }
+});
+
+// ── TICKER
+const tickerItems = ['Pay On Delivery','Massachusetts','Sneakers','Apparel','Accessories','Limited Drops','DM To Order','Fast Delivery','Authenticated Pieces','Shop With Luca'];
+const tickerEl = document.getElementById('ticker');
+tickerEl.innerHTML = [...tickerItems,...tickerItems].map(t=>`<div class="ticker-item"><span>★</span>${t}</div>`).join('');
+
+// ── NAV
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('nav-'+page)?.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── LISTINGS
+let allListings = [], currentListing = null, activeFilter = 'all';
+
+async function loadListings() {
+  const { data, error } = await sb.from('listings').select('*').eq('active', true).order('created_at', { ascending: false });
+  if (error) { document.getElementById('product-grid').innerHTML = '<div class="loading-grid">Could not load listings.</div>'; return; }
+  allListings = data || [];
+  buildFilters();
+  renderListings(allListings);
+}
+
+function buildFilters() {
+  const brands = [...new Set(allListings.map(l=>l.brand).filter(Boolean))];
+  const categories = [...new Set(allListings.map(l=>l.category).filter(Boolean))];
+  const filtersEl = document.getElementById('filters');
+  filtersEl.innerHTML = `<span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="filterBy('all',this)" data-filter="all">All</button>
+    ${categories.map(c=>`<button class="filter-btn" onclick="filterBy('cat:${c}',this)">${c}</button>`).join('')}
+    ${brands.map(b=>`<button class="filter-btn" onclick="filterBy('brand:${b}',this)">${b}</button>`).join('')}`;
+}
+
+function filterBy(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if (filter === 'all') { renderListings(allListings); return; }
+  const [type, val] = filter.split(':');
+  const filtered = allListings.filter(l => type==='cat' ? l.category===val : l.brand===val);
+  renderListings(filtered);
+}
+
+const emojiMap = { 'Sneakers':'👟','Shoes':'👟','Apparel':'🧥','Hoodies':'🧥','T-Shirts':'👕','Accessories':'💍','Hats':'🧢','Bags':'👜' };
+function getEmoji(category) { return emojiMap[category] || '📦'; }
+
+function renderListings(listings) {
+  const grid = document.getElementById('product-grid');
+  if (!listings.length) { grid.innerHTML = '<div class="empty-grid">No listings found</div>'; return; }
+  grid.innerHTML = listings.map((l,i) => `
+    <div class="product-card" onclick="openProduct('${l.id}')" style="animation-delay:${i*0.05}s">
+      <div class="product-img">
+        <span class="product-badge badge-brand">${l.brand||l.category}</span>
+        ${l.limited ? '<span class="product-badge badge-limited" style="top:12px;right:12px;left:auto">Limited</span>' : ''}
+        <span style="font-size:72px">${getEmoji(l.category)}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-brand">${l.brand||'—'}</div>
+        <div class="product-name">${l.name}</div>
+        <div class="product-category">${l.category}</div>
+        <div class="product-footer">
+          <div class="product-price">${l.price ? '$'+l.price : 'DM for price'}</div>
+          <button class="add-cart-btn" onclick="event.stopPropagation();quickAdd('${l.id}')">+ Cart</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function openProduct(id) {
+  const l = allListings.find(x=>x.id===id);
+  if (!l) return;
+  currentListing = l;
+  document.getElementById('modal-emoji').textContent = getEmoji(l.category);
+  document.getElementById('modal-badge-brand').textContent = l.brand||l.category;
+  document.getElementById('modal-brand').textContent = l.brand||'';
+  document.getElementById('modal-name').textContent = l.name;
+  document.getElementById('modal-cat').textContent = l.category;
+  document.getElementById('modal-price').textContent = l.price ? '$'+l.price : 'DM for price';
+  document.getElementById('modal-desc').textContent = l.description||'';
+  document.getElementById('modal-limited').className = 'limited-notice' + (l.limited?' show':'');
+  const sizes = l.sizes ? (Array.isArray(l.sizes)?l.sizes:l.sizes.split(',')) : [];
+  document.getElementById('modal-sizes').innerHTML = sizes.map(s=>`<div class="size-tag">${s.trim()}</div>`).join('') || '<div class="size-tag">One Size / DM for sizes</div>';
+  document.getElementById('product-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal() { document.getElementById('product-modal').classList.remove('open'); document.body.style.overflow=''; }
+function closeProductModal(e) { if(e.target===document.getElementById('product-modal')) closeModal(); }
+
+function openPurchaseFromModal() { closeModal(); document.getElementById('purchase-modal').classList.add('open'); }
+function closePurchaseModal(e) { if(e.target===document.getElementById('purchase-modal')) closePurchaseModalBtn(); }
+function closePurchaseModalBtn() { document.getElementById('purchase-modal').classList.remove('open'); document.body.style.overflow=''; }
+
+document.addEventListener('keydown', e => { if(e.key==='Escape'){closeModal();closePurchaseModalBtn();} });
+
+// ── CART
+let cart = [];
+
+function quickAdd(id) {
+  const l = allListings.find(x=>x.id===id);
+  if(l) { cart.push(l); updateCart(); showToast(l.name+' added to cart'); }
+}
+
+function addToCartFromModal() {
+  if(currentListing) { cart.push(currentListing); updateCart(); closeModal(); showToast(currentListing.name+' added to cart'); }
+}
+
+function updateCart() {
+  document.getElementById('cart-count').textContent = cart.length;
+  const total = cart.reduce((s,i)=>s+(parseFloat(i.price)||0),0);
+  document.getElementById('cart-total').textContent = total ? '$'+total : '$0 (DM for pricing)';
+  const itemsEl = document.getElementById('cart-items');
+  if(!cart.length) { itemsEl.innerHTML='<div class="cart-empty">YOUR CART IS EMPTY</div>'; return; }
+  itemsEl.innerHTML = cart.map((l,i)=>`
+    <div class="cart-item">
+      <div class="cart-item-emoji">${getEmoji(l.category)}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-brand">${l.brand||l.category}</div>
+        <div class="cart-item-name">${l.name}</div>
+        <div class="cart-item-price">${l.price?'$'+l.price:'DM for price'}</div>
+      </div>
+      <button class="cart-remove" onclick="removeFromCart(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removeFromCart(i) { cart.splice(i,1); updateCart(); }
+function toggleCart() { document.getElementById('cart-drawer').classList.toggle('open'); }
+function openCheckout() { toggleCart(); document.getElementById('purchase-modal').classList.add('open'); }
+
+// ── REQUESTS
+async function submitRequest(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.submit-btn');
+  btn.textContent='Sending...'; btn.disabled=true;
+  const payload = {
+    name: document.getElementById('req-name').value,
+    contact: document.getElementById('req-contact').value,
+    item: document.getElementById('req-item').value,
+    budget: document.getElementById('req-budget').value,
+    client_slug: 'sneakers-by-luca'
+  };
+  await sb.from('requests').insert(payload);
+  btn.textContent='Send Request'; btn.disabled=false;
+  document.getElementById('req-success').classList.add('show');
+  e.target.reset();
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
