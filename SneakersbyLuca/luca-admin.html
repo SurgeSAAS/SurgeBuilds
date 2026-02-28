@@ -7,120 +7,128 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Darker+Grotesque:wght@400;500;600;700;800;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root {
-  --white:#FFFFFF; --off:#F5F4F0; --black:#0A0A0A;
-  --mid:#666; --light:#AAA; --border:#E0E0E0;
-  --red:#FF2020; --green:#00C853;
-}
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Darker Grotesque',sans-serif; background:var(--off); color:var(--black); min-height:100vh; }
+body { font-family:'Darker Grotesque',sans-serif; background:#f5f5f5; color:#0a0a0a; min-height:100vh; }
 
 /* LOGIN */
-#login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--black); }
-.login-box { background:white; padding:48px; width:420px; position:relative; }
-.login-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--red); }
-.login-title { font-family:'Bebas Neue',sans-serif; font-size:36px; letter-spacing:0.05em; margin-bottom:4px; }
-.login-sub { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.2em; color:var(--light); margin-bottom:32px; }
-.form-group { margin-bottom:18px; }
-.form-label { display:block; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--mid); text-transform:uppercase; margin-bottom:6px; }
-.form-input { width:100%; background:var(--off); border:1px solid var(--border); padding:12px 14px; font-family:'DM Mono',monospace; font-size:14px; outline:none; transition:border-color 0.2s; color:var(--black); }
-.form-input:focus { border-color:var(--black); background:white; }
-.form-input::placeholder { color:var(--light); }
-.btn-login { width:100%; background:var(--black); color:white; border:none; padding:14px; font-family:'Darker Grotesque',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; margin-top:8px; }
+#login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:#0a0a0a; }
+.login-box { background:#fff; padding:48px; width:400px; position:relative; }
+.login-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:#e63030; }
+.login-title { font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:0.05em; margin-bottom:4px; }
+.login-sub { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:#bbb; margin-bottom:32px; }
+.fl { display:block; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:#888; text-transform:uppercase; margin-bottom:6px; }
+.fi { width:100%; background:#f9f9f9; border:1px solid #e8e8e8; padding:11px 14px; font-family:'DM Mono',monospace; font-size:13px; outline:none; transition:border-color 0.2s; color:#0a0a0a; }
+.fi:focus { border-color:#0a0a0a; background:#fff; }
+.fi::placeholder { color:#ccc; }
+.fg { margin-bottom:16px; }
+.btn-login { width:100%; background:#0a0a0a; color:#fff; border:none; padding:13px; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; cursor:pointer; margin-top:8px; transition:background 0.2s; }
 .btn-login:hover { background:#222; }
 .btn-login:disabled { opacity:0.4; cursor:not-allowed; }
-.error-msg { background:#FFF5F5; border:1px solid #FFD0D0; color:var(--red); padding:10px 14px; font-size:12px; font-family:'DM Mono',monospace; margin-top:14px; display:none; }
+.err-msg { background:#fff5f5; border:1px solid #ffd0d0; color:#e63030; padding:10px 14px; font-size:12px; font-family:'DM Mono',monospace; margin-top:12px; display:none; }
 
 /* APP */
 #app { display:none; min-height:100vh; }
+header { background:#0a0a0a; color:#fff; height:54px; display:flex; align-items:center; justify-content:space-between; padding:0 32px; position:sticky; top:0; z-index:100; }
+.h-logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:0.08em; }
+.h-logo span { color:#e63030; }
+.h-right { display:flex; gap:12px; align-items:center; }
+.h-tag { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:rgba(255,255,255,0.3); }
+.btn-logout { background:none; border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); padding:5px 14px; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; cursor:pointer; transition:all 0.2s; }
+.btn-logout:hover { border-color:#e63030; color:#e63030; }
 
-/* HEADER */
-header { background:var(--black); color:white; padding:0 40px; height:56px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
-.header-logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:0.08em; }
-.header-logo span { color:var(--red); }
-.header-right { display:flex; gap:16px; align-items:center; }
-.header-tag { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:rgba(255,255,255,0.4); }
-.btn-logout { background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); padding:6px 14px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.15em; cursor:pointer; transition:all 0.2s; }
-.btn-logout:hover { border-color:var(--red); color:var(--red); }
-
-/* CONTENT */
-.content { padding:32px 40px; max-width:1200px; margin:0 auto; }
+.content { padding:28px 32px; max-width:1100px; margin:0 auto; }
 
 /* TABS */
-.tabs { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:28px; }
-.tab { padding:12px 24px; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; border:none; background:none; color:var(--light); border-bottom:2px solid transparent; margin-bottom:-2px; transition:all 0.2s; }
-.tab:hover { color:var(--black); }
-.tab.active { color:var(--black); border-bottom-color:var(--red); }
+.tabs { display:flex; border-bottom:2px solid #e8e8e8; margin-bottom:24px; }
+.tab { padding:11px 22px; font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; border:none; background:none; color:#bbb; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all 0.2s; }
+.tab:hover { color:#0a0a0a; }
+.tab.active { color:#0a0a0a; border-bottom-color:#e63030; }
 
-/* SECTION HEADER */
-.section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
-.section-title { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.03em; }
-.btn-add { background:var(--black); color:white; border:none; padding:10px 20px; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; gap:6px; }
-.btn-add:hover { background:#222; }
+.sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.sec-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:0.03em; }
+.btn-add { background:#0a0a0a; color:#fff; border:none; padding:9px 20px; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
+.btn-add:hover { background:#333; }
 
-/* LISTINGS TABLE */
-.listings-table { background:white; border:1px solid var(--border); overflow:hidden; }
-.table-head { display:grid; grid-template-columns:2fr 1fr 1fr 1fr 80px 100px; padding:10px 20px; background:var(--off); border-bottom:1px solid var(--border); }
-.th { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--light); text-transform:uppercase; }
-.table-row { display:grid; grid-template-columns:2fr 1fr 1fr 1fr 80px 100px; padding:14px 20px; border-bottom:1px solid var(--border); align-items:center; transition:background 0.15s; }
-.table-row:last-child { border-bottom:none; }
-.table-row:hover { background:var(--off); }
-.item-name { font-size:14px; font-weight:700; }
-.item-brand { font-family:'DM Mono',monospace; font-size:9px; color:var(--light); letter-spacing:0.15em; margin-top:2px; }
-.td { font-size:13px; color:var(--mid); font-family:'DM Mono',monospace; }
-.td.name-cell { }
-.badge-sm { display:inline-block; padding:2px 8px; font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.15em; text-transform:uppercase; }
-.badge-active { background:rgba(0,200,83,0.1); color:var(--green); border:1px solid rgba(0,200,83,0.3); }
-.badge-inactive { background:#FFF5F5; color:var(--red); border:1px solid #FFD0D0; }
-.badge-limited { background:#FFF3CD; color:#856404; border:1px solid #FFE083; }
-.row-actions { display:flex; gap:6px; justify-content:flex-end; }
-.icon-btn { background:none; border:1px solid var(--border); width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s; font-size:12px; }
-.icon-btn:hover { border-color:var(--black); color:var(--black); }
-.icon-btn.danger:hover { border-color:var(--red); color:var(--red); }
-.empty-table { padding:60px; text-align:center; color:var(--light); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.2em; }
-.loading-table { padding:40px; text-align:center; color:var(--light); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.2em; }
+/* LISTINGS GRID */
+.listings-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.listing-card { background:#fff; border:1px solid #e8e8e8; overflow:hidden; }
+.listing-photo { aspect-ratio:1/1; background:#f5f5f5; overflow:hidden; position:relative; }
+.listing-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+.listing-photo-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:48px; color:#ddd; }
+.listing-status { position:absolute; top:8px; left:8px; font-family:'DM Mono',monospace; font-size:7px; letter-spacing:0.15em; text-transform:uppercase; padding:3px 7px; }
+.status-live { background:rgba(0,180,80,0.9); color:#fff; }
+.status-hidden { background:rgba(200,50,50,0.9); color:#fff; }
+.listing-limited { position:absolute; top:8px; right:8px; background:#e63030; color:#fff; font-family:'DM Mono',monospace; font-size:7px; letter-spacing:0.12em; text-transform:uppercase; padding:3px 7px; }
+.photo-count { position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.55); color:#fff; font-family:'DM Mono',monospace; font-size:8px; padding:2px 7px; }
+.listing-info { padding:12px; }
+.listing-name { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:0.04em; line-height:1.1; margin-bottom:2px; }
+.listing-brand { font-family:'DM Mono',monospace; font-size:8px; color:#aaa; letter-spacing:0.15em; margin-bottom:6px; }
+.listing-price { font-family:'DM Mono',monospace; font-size:12px; margin-bottom:10px; }
+.listing-actions { display:flex; gap:6px; }
+.lbtn { flex:1; padding:6px; border:1px solid #e8e8e8; background:transparent; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.1em; cursor:pointer; transition:all 0.15s; text-transform:uppercase; }
+.lbtn:hover { border-color:#0a0a0a; background:#0a0a0a; color:#fff; }
+.lbtn.danger:hover { border-color:#e63030; background:#e63030; color:#fff; }
+.empty-grid { padding:60px; text-align:center; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.2em; color:#ccc; grid-column:1/-1; }
+.loading-msg { padding:40px; text-align:center; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.2em; color:#ccc; }
 
-/* REQUESTS TABLE */
-.requests-table { background:white; border:1px solid var(--border); }
-.req-head { display:grid; grid-template-columns:1fr 1fr 2fr 1fr 100px; padding:10px 20px; background:var(--off); border-bottom:1px solid var(--border); }
-.req-row { display:grid; grid-template-columns:1fr 1fr 2fr 1fr 100px; padding:14px 20px; border-bottom:1px solid var(--border); align-items:start; transition:background 0.15s; }
+/* REQUESTS */
+.req-list { background:#fff; border:1px solid #e8e8e8; }
+.req-head { display:grid; grid-template-columns:1fr 1fr 2fr 1fr 90px; padding:10px 18px; background:#f9f9f9; border-bottom:1px solid #e8e8e8; }
+.th { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.2em; color:#bbb; text-transform:uppercase; }
+.req-row { display:grid; grid-template-columns:1fr 1fr 2fr 1fr 90px; padding:14px 18px; border-bottom:1px solid #e8e8e8; align-items:start; }
 .req-row:last-child { border-bottom:none; }
-.req-row:hover { background:var(--off); }
-.req-item-text { font-size:13px; color:var(--black); font-weight:500; line-height:1.4; }
-.req-date { font-family:'DM Mono',monospace; font-size:10px; color:var(--light); }
-.btn-done { background:var(--black); color:white; border:none; padding:5px 12px; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; cursor:pointer; transition:background 0.2s; }
-.btn-done:hover { background:#333; }
+.td { font-size:13px; color:#888; font-family:'DM Mono',monospace; }
+.td.dark { color:#0a0a0a; font-weight:600; font-family:'Darker Grotesque',sans-serif; }
+.td.item { font-size:13px; color:#0a0a0a; font-weight:500; line-height:1.4; font-family:'Darker Grotesque',sans-serif; }
+.btn-dismiss { background:#0a0a0a; color:#fff; border:none; padding:4px 12px; font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.15em; cursor:pointer; transition:background 0.2s; }
+.btn-dismiss:hover { background:#e63030; }
+.empty-req { padding:48px; text-align:center; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.2em; color:#ccc; }
 
 /* MODAL */
-.modal-overlay { position:fixed; inset:0; background:rgba(10,10,10,0.6); display:none; align-items:center; justify-content:center; z-index:1000; backdrop-filter:blur(4px); }
-.modal-overlay.open { display:flex; }
-.modal { background:white; width:560px; max-height:90vh; overflow-y:auto; position:relative; animation:modalIn 0.3s ease; }
-.modal::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--red); }
-@keyframes modalIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
-.modal-header { padding:24px 28px 20px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; }
-.modal-title { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.03em; }
-.modal-close { background:none; border:none; color:var(--light); cursor:pointer; font-size:20px; line-height:1; }
-.modal-close:hover { color:var(--black); }
-.modal-body { padding:24px 28px; }
-.modal-footer { padding:16px 28px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.btn-save { background:var(--black); color:white; border:none; padding:11px 24px; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
+.overlay { position:fixed; inset:0; background:rgba(10,10,10,0.6); display:none; align-items:center; justify-content:center; z-index:1000; backdrop-filter:blur(4px); }
+.overlay.open { display:flex; }
+.modal { background:#fff; width:580px; max-height:92vh; overflow-y:auto; position:relative; animation:mi 0.3s ease; }
+.modal::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:#e63030; }
+@keyframes mi { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+.modal-head { padding:22px 26px 18px; border-bottom:1px solid #e8e8e8; display:flex; align-items:flex-start; justify-content:space-between; }
+.modal-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:0.03em; }
+.modal-close { background:none; border:none; color:#bbb; cursor:pointer; font-size:18px; line-height:1; }
+.modal-close:hover { color:#0a0a0a; }
+.modal-body { padding:22px 26px; }
+.modal-foot { padding:14px 26px; border-top:1px solid #e8e8e8; display:flex; gap:10px; justify-content:flex-end; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.btn-save { background:#0a0a0a; color:#fff; border:none; padding:10px 24px; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
 .btn-save:hover { background:#222; }
 .btn-save:disabled { opacity:0.4; cursor:not-allowed; }
-.btn-cancel { background:transparent; color:var(--mid); border:1px solid var(--border); padding:11px 24px; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.15s; }
-.btn-cancel:hover { color:var(--black); border-color:var(--black); }
-.toggle-row { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border); }
+.btn-cancel { background:transparent; color:#888; border:1px solid #e8e8e8; padding:10px 22px; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.15s; }
+.btn-cancel:hover { color:#0a0a0a; border-color:#0a0a0a; }
+.toggle-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f0f0f0; }
 .toggle-row:last-child { border-bottom:none; }
-.toggle-label { font-size:14px; font-weight:600; }
-.toggle-desc { font-size:12px; color:var(--light); margin-top:2px; font-family:'DM Mono',monospace; }
-.toggle { position:relative; width:36px; height:20px; background:var(--border); border-radius:10px; cursor:pointer; transition:background 0.2s; flex-shrink:0; }
-.toggle.on { background:var(--black); }
-.toggle::after { content:''; position:absolute; width:14px; height:14px; background:white; border-radius:50%; top:3px; left:3px; transition:transform 0.2s; }
+.tl { font-size:14px; font-weight:600; }
+.td2 { font-size:11px; color:#bbb; margin-top:2px; font-family:'DM Mono',monospace; }
+.toggle { position:relative; width:34px; height:18px; background:#e8e8e8; border-radius:9px; cursor:pointer; transition:background 0.2s; flex-shrink:0; }
+.toggle.on { background:#0a0a0a; }
+.toggle::after { content:''; position:absolute; width:12px; height:12px; background:#fff; border-radius:50%; top:3px; left:3px; transition:transform 0.2s; }
 .toggle.on::after { transform:translateX(16px); }
-textarea.form-input { resize:vertical; min-height:80px; }
-.sizes-note { font-family:'DM Mono',monospace; font-size:9px; color:var(--light); margin-top:4px; letter-spacing:0.1em; }
+textarea.fi { resize:vertical; min-height:75px; }
+.sizes-note { font-family:'DM Mono',monospace; font-size:9px; color:#bbb; margin-top:4px; }
 
-.toast { position:fixed; bottom:24px; right:24px; background:var(--black); color:white; padding:12px 20px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.12em; z-index:9999; transform:translateY(80px); opacity:0; transition:all 0.3s; }
+/* MULTI PHOTO UPLOAD */
+.photos-section { margin-bottom:18px; }
+.photos-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:#888; text-transform:uppercase; margin-bottom:10px; display:block; }
+.photos-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:8px; }
+.photo-thumb-wrap { position:relative; aspect-ratio:1/1; }
+.photo-thumb-wrap img { width:100%; height:100%; object-fit:cover; display:block; border:1px solid #e8e8e8; }
+.photo-remove-btn { position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.7); color:#fff; border:none; width:20px; height:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:10px; transition:background 0.15s; border-radius:2px; }
+.photo-remove-btn:hover { background:#e63030; }
+.photo-add-btn { aspect-ratio:1/1; border:2px dashed #e8e8e8; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:border-color 0.2s; background:#fafafa; position:relative; }
+.photo-add-btn:hover { border-color:#0a0a0a; }
+.photo-add-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.photo-add-icon { font-size:20px; color:#ccc; margin-bottom:4px; }
+.photo-add-text { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.1em; color:#ccc; text-transform:uppercase; }
+.upload-status { font-family:'DM Mono',monospace; font-size:9px; color:#888; letter-spacing:0.1em; margin-top:4px; min-height:16px; }
+
+.toast { position:fixed; bottom:20px; right:24px; background:#0a0a0a; color:#fff; padding:11px 20px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.12em; z-index:9999; transform:translateY(70px); opacity:0; transition:all 0.3s; }
 .toast.show { transform:translateY(0); opacity:1; }
 </style>
 </head>
@@ -131,122 +139,95 @@ textarea.form-input { resize:vertical; min-height:80px; }
   <div class="login-box">
     <div class="login-title">Admin Panel</div>
     <div class="login-sub">// shop with luca · restricted</div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input type="email" class="form-input" id="login-email" placeholder="luca@email.com">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Password</label>
-      <input type="password" class="form-input" id="login-password" placeholder="••••••••">
-    </div>
+    <div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="le" placeholder="your@email.com"></div>
+    <div class="fg"><label class="fl">Password</label><input type="password" class="fi" id="lp" placeholder="••••••••"></div>
     <button class="btn-login" id="login-btn" onclick="handleLogin()">Sign In</button>
-    <div class="error-msg" id="login-error"></div>
+    <div class="err-msg" id="login-err"></div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
   <header>
-    <div class="header-logo">Shop With <span>Luca</span> — Admin</div>
-    <div class="header-right">
-      <div class="header-tag">// ADMIN PANEL</div>
+    <div class="h-logo">Shop With <span>Luca</span> — Admin</div>
+    <div class="h-right">
+      <div class="h-tag">// ADMIN PANEL</div>
       <button class="btn-logout" onclick="handleLogout()">Sign Out</button>
     </div>
   </header>
-
   <div class="content">
     <div class="tabs">
       <button class="tab active" onclick="showTab('listings',this)">Listings</button>
       <button class="tab" onclick="showTab('requests',this)">Custom Requests</button>
     </div>
 
-    <!-- LISTINGS TAB -->
     <div id="tab-listings">
-      <div class="section-header">
-        <div class="section-title">All Listings</div>
-        <button class="btn-add" onclick="openAddListing()">+ Add Listing</button>
+      <div class="sec-head">
+        <div class="sec-title">All Listings</div>
+        <button class="btn-add" onclick="openAdd()">+ Add Listing</button>
       </div>
-      <div class="listings-table">
-        <div class="table-head">
-          <div class="th">Item</div>
-          <div class="th">Brand</div>
-          <div class="th">Category</div>
-          <div class="th">Price</div>
-          <div class="th">Status</div>
-          <div class="th"></div>
-        </div>
-        <div id="listings-list"><div class="loading-table">Loading listings...</div></div>
+      <div class="listings-grid" id="listings-grid">
+        <div class="loading-msg">Loading...</div>
       </div>
     </div>
 
-    <!-- REQUESTS TAB -->
     <div id="tab-requests" style="display:none">
-      <div class="section-header">
-        <div class="section-title">Custom Requests</div>
-      </div>
-      <div class="requests-table">
+      <div class="sec-head"><div class="sec-title">Custom Requests</div></div>
+      <div class="req-list">
         <div class="req-head">
-          <div class="th">Name</div>
-          <div class="th">Contact</div>
-          <div class="th">Item Wanted</div>
-          <div class="th">Budget</div>
-          <div class="th"></div>
+          <div class="th">Name</div><div class="th">Contact</div><div class="th">Item Wanted</div><div class="th">Budget</div><div class="th"></div>
         </div>
-        <div id="requests-list"><div class="loading-table">Loading requests...</div></div>
+        <div id="requests-body"><div class="empty-req">Loading...</div></div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- LISTING MODAL -->
-<div class="modal-overlay" id="listing-modal">
+<div class="overlay" id="listing-modal">
   <div class="modal">
-    <div class="modal-header">
+    <div class="modal-head">
       <div class="modal-title" id="modal-title">Add Listing</div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="form-row" style="margin-bottom:16px">
-        <div class="form-group">
-          <label class="form-label">Item Name</label>
-          <input type="text" class="form-input" id="l-name" placeholder="Air Jordan 1 Low">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Brand</label>
-          <input type="text" class="form-input" id="l-brand" placeholder="Nike, Chrome Hearts, Yeezy...">
-        </div>
+
+      <!-- MULTI PHOTO UPLOAD -->
+      <div class="photos-section">
+        <label class="photos-label">Photos (square 1:1) — up to 6</label>
+        <div class="photos-grid" id="photos-grid"></div>
+        <div class="upload-status" id="upload-status"></div>
       </div>
-      <div class="form-row" style="margin-bottom:16px">
-        <div class="form-group">
-          <label class="form-label">Category</label>
-          <input type="text" class="form-input" id="l-category" placeholder="Sneakers, Apparel, Accessories...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Price ($)</label>
-          <input type="number" class="form-input" id="l-price" placeholder="Leave blank to show DM for price">
-        </div>
+
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="fg"><label class="fl">Item Name</label><input type="text" class="fi" id="l-name" placeholder="Air Jordan 1 Low"></div>
+        <div class="fg"><label class="fl">Brand</label><input type="text" class="fi" id="l-brand" placeholder="Nike, Chrome Hearts..."></div>
       </div>
-      <div class="form-group" style="margin-bottom:16px">
-        <label class="form-label">Available Sizes</label>
-        <input type="text" class="form-input" id="l-sizes" placeholder="8, 9, 10, 10.5, 11 — or S, M, L, XL">
-        <div class="sizes-note">Separate sizes with commas</div>
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="fg"><label class="fl">Category</label><input type="text" class="fi" id="l-category" placeholder="Sneakers, Apparel, Accessories..."></div>
+        <div class="fg"><label class="fl">Price ($)</label><input type="number" class="fi" id="l-price" placeholder="Leave blank = DM for price"></div>
       </div>
-      <div class="form-group" style="margin-bottom:16px">
-        <label class="form-label">Description (optional)</label>
-        <textarea class="form-input" id="l-description" placeholder="Colorway, condition, any details..."></textarea>
+      <div class="fg">
+        <label class="fl">Available Sizes</label>
+        <input type="text" class="fi" id="l-sizes" placeholder="8, 9, 10, 10.5, 11  or  S, M, L, XL">
+        <div class="sizes-note">Separate with commas</div>
+      </div>
+      <div class="fg">
+        <label class="fl">Description (optional)</label>
+        <textarea class="fi" id="l-desc" placeholder="Colorway, condition, details..."></textarea>
       </div>
       <div style="margin-top:8px">
         <div class="toggle-row">
-          <div><div class="toggle-label">Active / Visible</div><div class="toggle-desc">Show this listing on the public site</div></div>
-          <div class="toggle on" id="toggle-active" onclick="toggleSwitch('active')"></div>
+          <div><div class="tl">Active / Visible on Site</div><div class="td2">Show this listing to customers</div></div>
+          <div class="toggle on" id="toggle-active" onclick="tog('active')"></div>
         </div>
         <div class="toggle-row">
-          <div><div class="toggle-label">Limited Quantity</div><div class="toggle-desc">Shows a "Limited" badge on the listing</div></div>
-          <div class="toggle" id="toggle-limited" onclick="toggleSwitch('limited')"></div>
+          <div><div class="tl">Limited Quantity</div><div class="td2">Adds a Limited badge to the listing</div></div>
+          <div class="toggle" id="toggle-limited" onclick="tog('limited')"></div>
         </div>
       </div>
     </div>
-    <div class="modal-footer">
+    <div class="modal-foot">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-save" id="save-btn" onclick="saveListing()">Save Listing</button>
     </div>
@@ -259,103 +240,136 @@ textarea.form-input { resize:vertical; min-height:80px; }
 const { createClient } = supabase;
 const sb = createClient('https://zvrypvsndhkirxockflg.supabase.co','sb_publishable_phRSB9e426qhCCHJ_WEpVg_W_Y2IYwC');
 
-let allListings = [], allRequests = [], editingId = null;
-let toggleStates = { active: true, limited: false };
+let allListings=[], editingId=null;
+let uploadedPhotos=[]; // array of URLs
+let ts={active:true,limited:false};
+const MAX_PHOTOS=6;
 
 // AUTH
-async function handleLogin() {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-  const btn = document.getElementById('login-btn');
-  const err = document.getElementById('login-error');
-  if (!email||!password) { showError('Please enter email and password.'); return; }
-  btn.disabled=true; btn.textContent='Signing in...'; err.style.display='none';
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) { showError(error.message); btn.disabled=false; btn.textContent='Sign In'; return; }
+async function handleLogin(){
+  const email=document.getElementById('le').value,pass=document.getElementById('lp').value;
+  const btn=document.getElementById('login-btn'),err=document.getElementById('login-err');
+  if(!email||!pass){showErr('Please fill in both fields.');return;}
+  btn.disabled=true;btn.textContent='Signing in...';err.style.display='none';
+  const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){showErr(error.message);btn.disabled=false;btn.textContent='Sign In';return;}
   showApp();
 }
-
-function showError(msg) { const e=document.getElementById('login-error'); e.textContent=msg; e.style.display='block'; }
-
-async function handleLogout() {
-  await sb.auth.signOut();
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-}
-
-function showApp() {
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='block';
-  loadListings(); loadRequests();
-}
-
-sb.auth.getSession().then(({data:{session}})=>{ if(session) showApp(); });
-document.addEventListener('keydown',e=>{ if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none') handleLogin(); });
+function showErr(m){const e=document.getElementById('login-err');e.textContent=m;e.style.display='block';}
+async function handleLogout(){await sb.auth.signOut();document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';}
+function showApp(){document.getElementById('login-screen').style.display='none';document.getElementById('app').style.display='block';loadListings();loadRequests();}
+sb.auth.getSession().then(({data:{session}})=>{if(session)showApp();});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none')handleLogin();});
 
 // TABS
-function showTab(tab, btn) {
-  document.querySelectorAll('[id^="tab-"]').forEach(t=>t.style.display='none');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+tab).style.display='block';
+function showTab(t,btn){
+  document.querySelectorAll('[id^="tab-"]').forEach(x=>x.style.display='none');
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tab-'+t).style.display='block';
   btn.classList.add('active');
 }
 
 // LISTINGS
-async function loadListings() {
-  const { data, error } = await sb.from('listings').select('*').eq('client_slug','sneakers-by-luca').order('created_at',{ascending:false});
-  if (error) { document.getElementById('listings-list').innerHTML='<div class="loading-table">Error loading listings.</div>'; return; }
-  allListings = data||[];
-  renderListings();
+async function loadListings(){
+  const{data,error}=await sb.from('listings').select('*').eq('client_slug','sneakers-by-luca').order('created_at',{ascending:false});
+  if(error){document.getElementById('listings-grid').innerHTML='<div class="loading-msg">Error loading.</div>';return;}
+  allListings=data||[];renderListings();
 }
 
-function renderListings() {
-  const el = document.getElementById('listings-list');
-  if (!allListings.length) { el.innerHTML='<div class="empty-table">No listings yet — click Add Listing to get started</div>'; return; }
-  el.innerHTML = allListings.map(l=>`
-    <div class="table-row">
-      <div>
-        <div class="item-name">${l.name}</div>
-        <div class="item-brand">${l.brand||'No brand'}</div>
+function getFirstPhoto(l){
+  if(l.photos&&Array.isArray(l.photos)&&l.photos.length) return l.photos[0];
+  if(l.photo_url) return l.photo_url;
+  return null;
+}
+function getPhotoCount(l){
+  if(l.photos&&Array.isArray(l.photos)) return l.photos.length;
+  if(l.photo_url) return 1;
+  return 0;
+}
+
+function renderListings(){
+  const grid=document.getElementById('listings-grid');
+  if(!allListings.length){grid.innerHTML='<div class="empty-grid">No listings yet — click Add Listing to get started</div>';return;}
+  grid.innerHTML=allListings.map(l=>{
+    const thumb=getFirstPhoto(l);
+    const count=getPhotoCount(l);
+    return `<div class="listing-card">
+      <div class="listing-photo">
+        ${thumb?`<img src="${thumb}" alt="${l.name}">`:'<div class="listing-photo-placeholder">📦</div>'}
+        <div class="listing-status ${l.active?'status-live':'status-hidden'}">${l.active?'Live':'Hidden'}</div>
+        ${l.limited?'<div class="listing-limited">Limited</div>':''}
+        ${count>1?`<div class="photo-count">${count} photos</div>`:''}
       </div>
-      <div class="td">${l.brand||'—'}</div>
-      <div class="td">${l.category||'—'}</div>
-      <div class="td">${l.price?'$'+l.price:'DM'}</div>
-      <div>
-        <span class="badge-sm ${l.active?'badge-active':'badge-inactive'}">${l.active?'Live':'Hidden'}</span>
-        ${l.limited?'<span class="badge-sm badge-limited" style="margin-left:4px">Limited</span>':''}
+      <div class="listing-info">
+        <div class="listing-name">${l.name}</div>
+        <div class="listing-brand">${l.brand||l.category||'—'}</div>
+        <div class="listing-price">${l.price?'$'+Number(l.price).toLocaleString():'DM for price'}</div>
+        <div class="listing-actions">
+          <button class="lbtn" onclick="toggleActive('${l.id}',${l.active})">${l.active?'Hide':'Show'}</button>
+          <button class="lbtn" onclick="openEdit('${l.id}')">Edit</button>
+          <button class="lbtn danger" onclick="deleteListing('${l.id}')">Del</button>
+        </div>
       </div>
-      <div class="row-actions">
-        <button class="icon-btn" onclick="toggleActive('${l.id}',${l.active})" title="${l.active?'Hide':'Show'}">👁</button>
-        <button class="icon-btn" onclick="openEdit('${l.id}')" title="Edit">✎</button>
-        <button class="icon-btn danger" onclick="deleteListing('${l.id}')" title="Delete">✕</button>
-      </div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleActive(id,cur){await sb.from('listings').update({active:!cur}).eq('id',id);loadListings();showToast(cur?'Hidden':'Live');}
+async function deleteListing(id){if(!confirm('Delete this listing?'))return;await sb.from('listings').delete().eq('id',id);loadListings();showToast('Deleted');}
+
+// PHOTO GRID RENDER
+function renderPhotosGrid(){
+  const grid=document.getElementById('photos-grid');
+  let html=uploadedPhotos.map((url,i)=>`
+    <div class="photo-thumb-wrap">
+      <img src="${url}" alt="photo ${i+1}">
+      <button class="photo-remove-btn" onclick="removePhoto(${i})">✕</button>
     </div>`).join('');
+  if(uploadedPhotos.length<MAX_PHOTOS){
+    html+=`<div class="photo-add-btn">
+      <input type="file" accept="image/*" onchange="handlePhotoAdd(event)">
+      <div class="photo-add-icon">+</div>
+      <div class="photo-add-text">Add Photo</div>
+    </div>`;
+  }
+  grid.innerHTML=html;
 }
 
-async function toggleActive(id, current) {
-  await sb.from('listings').update({active:!current}).eq('id',id);
-  loadListings(); showToast(current?'Listing hidden':'Listing live');
+function removePhoto(i){uploadedPhotos.splice(i,1);renderPhotosGrid();}
+
+async function handlePhotoAdd(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  setUploadStatus('Uploading...');
+  const ext=file.name.split('.').pop();
+  const fileName=`luca-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const{data,error}=await sb.storage.from('listings').upload(fileName,file,{upsert:true});
+  if(error){setUploadStatus('Upload failed: '+error.message);return;}
+  const{data:urlData}=sb.storage.from('listings').getPublicUrl(fileName);
+  uploadedPhotos.push(urlData.publicUrl);
+  setUploadStatus('');
+  renderPhotosGrid();
+  showToast('Photo added ✓');
 }
 
-async function deleteListing(id) {
-  if(!confirm('Delete this listing? Cannot be undone.')) return;
-  await sb.from('listings').delete().eq('id',id);
-  loadListings(); showToast('Listing deleted');
-}
+function setUploadStatus(msg){document.getElementById('upload-status').textContent=msg;}
 
 // ADD/EDIT
-function openAddListing() {
-  editingId=null;
+function openAdd(){
+  editingId=null;uploadedPhotos=[];
   document.getElementById('modal-title').textContent='Add Listing';
   document.getElementById('save-btn').textContent='Save Listing';
-  clearForm();
+  clearForm();renderPhotosGrid();
   document.getElementById('listing-modal').classList.add('open');
 }
 
-function openEdit(id) {
-  const l = allListings.find(x=>x.id===id);
-  if(!l) return;
+function openEdit(id){
+  const l=allListings.find(x=>x.id===id);
+  if(!l)return;
   editingId=id;
+  if(l.photos&&Array.isArray(l.photos)&&l.photos.length) uploadedPhotos=[...l.photos];
+  else if(l.photo_url) uploadedPhotos=[l.photo_url];
+  else uploadedPhotos=[];
   document.getElementById('modal-title').textContent='Edit Listing';
   document.getElementById('save-btn').textContent='Update Listing';
   document.getElementById('l-name').value=l.name||'';
@@ -363,80 +377,69 @@ function openEdit(id) {
   document.getElementById('l-category').value=l.category||'';
   document.getElementById('l-price').value=l.price||'';
   document.getElementById('l-sizes').value=Array.isArray(l.sizes)?l.sizes.join(', '):(l.sizes||'');
-  document.getElementById('l-description').value=l.description||'';
-  toggleStates={active:!!l.active, limited:!!l.limited};
-  updateToggles();
+  document.getElementById('l-desc').value=l.description||'';
+  ts={active:!!l.active,limited:!!l.limited};
+  updateToggles();renderPhotosGrid();
   document.getElementById('listing-modal').classList.add('open');
 }
 
-function clearForm() {
-  ['l-name','l-brand','l-category','l-price','l-sizes','l-description'].forEach(id=>{ document.getElementById(id).value=''; });
-  toggleStates={active:true,limited:false};
-  updateToggles();
+function clearForm(){
+  ['l-name','l-brand','l-category','l-price','l-sizes','l-desc'].forEach(id=>{document.getElementById(id).value='';});
+  ts={active:true,limited:false};updateToggles();
+  setUploadStatus('');
 }
 
-function closeModal() { document.getElementById('listing-modal').classList.remove('open'); editingId=null; }
+function closeModal(){document.getElementById('listing-modal').classList.remove('open');editingId=null;}
+function tog(k){ts[k]=!ts[k];updateToggles();}
+function updateToggles(){Object.keys(ts).forEach(k=>{const el=document.getElementById('toggle-'+k);if(el)el.className='toggle'+(ts[k]?' on':'');});}
 
-function toggleSwitch(k) { toggleStates[k]=!toggleStates[k]; updateToggles(); }
-function updateToggles() { Object.keys(toggleStates).forEach(k=>{ const el=document.getElementById('toggle-'+k); if(el) el.className='toggle'+(toggleStates[k]?' on':''); }); }
-
-async function saveListing() {
+async function saveListing(){
   const name=document.getElementById('l-name').value.trim();
-  if(!name) { showToast('Item name is required'); return; }
+  if(!name){showToast('Item name is required');return;}
   const btn=document.getElementById('save-btn');
-  btn.disabled=true; btn.textContent='Saving...';
+  btn.disabled=true;btn.textContent='Saving...';
   const sizesRaw=document.getElementById('l-sizes').value;
   const sizes=sizesRaw?sizesRaw.split(',').map(s=>s.trim()).filter(Boolean):[];
   const payload={
-    name, client_slug:'sneakers-by-luca',
+    name,client_slug:'sneakers-by-luca',
     brand:document.getElementById('l-brand').value,
     category:document.getElementById('l-category').value,
     price:parseFloat(document.getElementById('l-price').value)||null,
-    sizes, description:document.getElementById('l-description').value,
-    active:toggleStates.active, limited:toggleStates.limited
+    sizes,description:document.getElementById('l-desc').value,
+    active:ts.active,limited:ts.limited,
+    photos:uploadedPhotos,
+    photo_url:uploadedPhotos[0]||null
   };
   let error;
-  if(editingId) { ({error}=await sb.from('listings').update(payload).eq('id',editingId)); }
-  else { ({error}=await sb.from('listings').insert(payload)); }
-  btn.disabled=false; btn.textContent=editingId?'Update Listing':'Save Listing';
-  if(error) { showToast('Error: '+error.message); return; }
-  showToast(editingId?'Listing updated ✓':'Listing added ✓');
-  closeModal(); loadListings();
+  if(editingId){({error}=await sb.from('listings').update(payload).eq('id',editingId));}
+  else{({error}=await sb.from('listings').insert(payload));}
+  btn.disabled=false;btn.textContent=editingId?'Update Listing':'Save Listing';
+  if(error){showToast('Error: '+error.message);return;}
+  showToast(editingId?'Updated ✓':'Added ✓');
+  closeModal();loadListings();
 }
 
 // REQUESTS
-async function loadRequests() {
-  const { data } = await sb.from('requests').select('*').eq('client_slug','sneakers-by-luca').order('created_at',{ascending:false});
-  allRequests=data||[];
-  renderRequests();
-}
-
-function renderRequests() {
-  const el=document.getElementById('requests-list');
-  if(!allRequests.length) { el.innerHTML='<div class="empty-table">No custom requests yet</div>'; return; }
-  el.innerHTML=allRequests.map(r=>`
+async function loadRequests(){
+  const{data}=await sb.from('requests').select('*').eq('client_slug','sneakers-by-luca').order('created_at',{ascending:false});
+  const body=document.getElementById('requests-body');
+  if(!data||!data.length){body.innerHTML='<div class="empty-req">No requests yet</div>';return;}
+  body.innerHTML=data.map(r=>`
     <div class="req-row">
-      <div class="td" style="color:var(--black);font-weight:600">${r.name||'—'}</div>
+      <div class="td dark">${r.name||'—'}</div>
       <div class="td">${r.contact||'—'}</div>
-      <div class="req-item-text">${r.item||'—'}</div>
+      <div class="td item">${r.item||'—'}</div>
       <div class="td">${r.budget||'—'}</div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <div class="req-date">${r.created_at?new Date(r.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}):''}</div>
-        <button class="btn-done" onclick="dismissRequest('${r.id}')">Done</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#ccc">${r.created_at?new Date(r.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}):''}</div>
+        <button class="btn-dismiss" onclick="dismissReq('${r.id}')">Done</button>
       </div>
     </div>`).join('');
 }
 
-async function dismissRequest(id) {
-  await sb.from('requests').delete().eq('id',id);
-  loadRequests(); showToast('Request dismissed');
-}
+async function dismissReq(id){await sb.from('requests').delete().eq('id',id);loadRequests();showToast('Dismissed');}
 
-function showToast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 </script>
 </body>
 </html>
