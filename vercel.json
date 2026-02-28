@@ -1,0 +1,19 @@
+{
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "admin.surgesites.net" }],
+      "destination": "/admin/:path*"
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "shopwithluca.surgesites.net" }],
+      "destination": "/clients/shopwithluca/:path*"
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "admin.shopwithluca.surgesites.net" }],
+      "destination": "/clients/shopwithluca/admin/:path*"
+    }
+  ]
+}
