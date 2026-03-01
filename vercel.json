@@ -1,19 +1,10 @@
 {
-  "rewrites": [
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "admin.surgesites.net" }],
-      "destination": "/admin/index.html"
-    },
+  "redirects": [
     {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "shopwithluca.surgesites.net" }],
-      "destination": "/clients/shopwithluca/index.html"
-    },
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "admin.shopwithluca.surgesites.net" }],
-      "destination": "/clients/shopwithluca/admin/index.html"
+      "destination": "https://surge-builds-suh1.vercel.app/clients/shopwithluca/index.html",
+      "permanent": false
     }
   ]
 }
