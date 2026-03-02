@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop With Luca</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Darker+Grotesque:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'Darker Grotesque',sans-serif; background:#fff; color:#0a0a0a; overflow-x:hidden; }
+
+/* WELCOME */
+#welcome { position:fixed; inset:0; background:#0a0a0a; z-index:1000; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.welcome-grid { position:absolute; inset:0; opacity:0.06; background-image:repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(255,255,255,1) 59px,rgba(255,255,255,1) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(255,255,255,1) 59px,rgba(255,255,255,1) 60px); }
+.welcome-inner { position:relative; z-index:2; text-align:center; padding:0 24px; max-width:600px; }
+.welcome-tag { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.4em; color:rgba(255,255,255,0.3); text-transform:uppercase; margin-bottom:24px; animation:fu 0.7s ease 0.1s both; }
+.welcome-name { font-family:'Bebas Neue',sans-serif; font-size:clamp(80px,16vw,180px); color:#fff; line-height:0.88; letter-spacing:0.04em; animation:fu 0.7s ease 0.2s both; }
+.welcome-name span { color:#e63030; }
+.welcome-loc { font-size:12px; font-weight:700; letter-spacing:0.3em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:16px; animation:fu 0.7s ease 0.3s both; }
+.review-wrap { margin-top:36px; animation:fu 0.7s ease 0.4s both; }
+.review-stars { color:#e63030; font-size:13px; letter-spacing:3px; margin-bottom:8px; }
+.review-text { color:rgba(255,255,255,0.5); font-size:15px; font-weight:500; font-style:italic; min-height:42px; display:flex; align-items:center; justify-content:center; transition:opacity 0.4s; }
+.enter-btn { margin-top:40px; display:inline-block; border:1px solid rgba(255,255,255,0.25); color:#fff; padding:14px 52px; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.25em; text-transform:uppercase; cursor:pointer; background:transparent; transition:all 0.3s; animation:fu 0.7s ease 0.5s both; }
+.enter-btn:hover { background:#fff; color:#0a0a0a; }
+@keyframes fu { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* SITE */
+#site { display:none; }
+
+/* NAV */
+nav { position:fixed; top:0; left:0; right:0; z-index:500; background:#fff; border-bottom:1px solid #e8e8e8; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 32px; }
+.nav-logo { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.1em; cursor:pointer; white-space:nowrap; }
+.nav-center { display:flex; gap:28px; }
+.nav-link { font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#888; background:none; border:none; cursor:pointer; transition:color 0.2s; padding:0; }
+.nav-link:hover, .nav-link.active { color:#0a0a0a; }
+.nav-right { display:flex; align-items:center; gap:16px; }
+.cart-btn { position:relative; background:none; border:none; cursor:pointer; font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#0a0a0a; display:flex; align-items:center; gap:6px; }
+.cart-count { background:#0a0a0a; color:#fff; width:18px; height:18px; border-radius:50%; font-size:9px; display:flex; align-items:center; justify-content:center; font-family:'DM Mono',monospace; }
+
+/* PAGES */
+.page { display:none; padding-top:56px; min-height:100vh; }
+.page.active { display:block; }
+
+/* SHOP */
+.shop-header { padding:40px 32px 20px; border-bottom:1px solid #e8e8e8; display:flex; align-items:flex-end; justify-content:space-between; }
+.shop-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(48px,8vw,96px); line-height:0.9; letter-spacing:0.03em; }
+.shop-title span { color:#e63030; }
+.shop-meta { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:#bbb; text-transform:uppercase; text-align:right; }
+
+/* FILTERS */
+.filter-bar { padding:14px 32px; border-bottom:1px solid #e8e8e8; display:flex; gap:32px; align-items:center; flex-wrap:wrap; }
+.filter-group { display:flex; gap:6px; align-items:center; }
+.filter-group-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:#bbb; text-transform:uppercase; margin-right:4px; }
+.filter-btn { padding:5px 14px; border:1px solid #e8e8e8; background:transparent; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; color:#888; }
+.filter-btn:hover { border-color:#0a0a0a; color:#0a0a0a; }
+.filter-btn.active { background:#0a0a0a; color:#fff; border-color:#0a0a0a; }
+
+/* PRODUCT GRID */
+.product-grid { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid #e8e8e8; }
+.product-card { border-right:1px solid #e8e8e8; border-bottom:1px solid #e8e8e8; cursor:pointer; transition:background 0.15s; }
+.product-card:hover { background:#fafafa; }
+.product-card:nth-child(4n) { border-right:none; }
+.product-photo { aspect-ratio:1/1; overflow:hidden; position:relative; background:#f5f5f5; }
+.product-photo img { width:100%; height:100%; object-fit:cover; object-position:center; display:block; transition:transform 0.4s ease; }
+.product-card:hover .product-photo img { transform:scale(1.03); }
+.product-photo-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:60px; color:#ddd; }
+.limited-badge { position:absolute; top:10px; left:10px; background:#e63030; color:#fff; font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.15em; text-transform:uppercase; padding:3px 8px; }
+.photo-count-badge { position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.55); color:#fff; font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.1em; padding:3px 8px; }
+.product-info { padding:12px 16px 16px; }
+.product-info-name { font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:0.05em; line-height:1.1; margin-bottom:2px; }
+.product-info-brand { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; color:#aaa; text-transform:uppercase; margin-bottom:8px; }
+.product-info-bottom { display:flex; align-items:center; justify-content:space-between; }
+.product-price { font-family:'DM Mono',monospace; font-size:13px; color:#0a0a0a; }
+.quick-add { background:none; border:none; font-size:20px; cursor:pointer; color:#bbb; transition:color 0.2s; padding:0; line-height:1; }
+.quick-add:hover { color:#0a0a0a; }
+
+/* PRODUCT MODAL */
+.overlay { position:fixed; inset:0; background:rgba(10,10,10,0.7); z-index:800; display:none; align-items:center; justify-content:center; backdrop-filter:blur(6px); }
+.overlay.open { display:flex; }
+
+.product-modal { background:#fff; width:920px; max-width:96vw; max-height:92vh; display:grid; grid-template-columns:1fr 1fr; overflow:hidden; animation:mi 0.35s cubic-bezier(0.16,1,0.3,1); }
+@keyframes mi { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+
+/* PHOTO GALLERY SIDE */
+.modal-gallery { display:flex; flex-direction:column; background:#f5f5f5; border-right:1px solid #e8e8e8; overflow:hidden; }
+.main-photo { flex:1; position:relative; overflow:hidden; min-height:0; }
+.main-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+.main-photo-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:100px; color:#ddd; }
+
+/* PREV/NEXT ARROWS */
+.gallery-arrow { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.9); border:none; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; transition:background 0.2s; z-index:2; }
+.gallery-arrow:hover { background:#fff; }
+.gallery-arrow.prev { left:10px; }
+.gallery-arrow.next { right:10px; }
+.gallery-arrow.hidden { display:none; }
+
+/* THUMBNAIL STRIP */
+.thumb-strip { display:flex; gap:4px; padding:8px; background:#efefef; border-top:1px solid #e8e8e8; overflow-x:auto; flex-shrink:0; min-height:72px; align-items:center; }
+.thumb { width:56px; height:56px; object-fit:cover; cursor:pointer; border:2px solid transparent; transition:border-color 0.15s; flex-shrink:0; }
+.thumb.active { border-color:#0a0a0a; }
+.thumb-placeholder { width:56px; height:56px; background:#e8e8e8; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+
+/* MODAL INFO SIDE */
+.modal-info { padding:32px; display:flex; flex-direction:column; overflow-y:auto; }
+.modal-close { align-self:flex-end; background:none; border:1px solid #e8e8e8; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; transition:all 0.2s; margin-bottom:20px; flex-shrink:0; }
+.modal-close:hover { background:#0a0a0a; color:#fff; border-color:#0a0a0a; }
+.modal-brand { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.25em; color:#aaa; text-transform:uppercase; margin-bottom:6px; }
+.modal-name { font-family:'Bebas Neue',sans-serif; font-size:36px; letter-spacing:0.03em; line-height:1; margin-bottom:6px; }
+.modal-cat { font-size:13px; color:#888; font-weight:500; margin-bottom:20px; }
+.modal-price { font-family:'DM Mono',monospace; font-size:26px; margin-bottom:20px; padding-bottom:18px; border-bottom:1px solid #e8e8e8; }
+.modal-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:#aaa; text-transform:uppercase; margin-bottom:8px; }
+.sizes-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px; }
+.size-chip { padding:5px 12px; border:1px solid #e8e8e8; font-family:'DM Mono',monospace; font-size:11px; color:#555; }
+.modal-desc { font-size:14px; color:#888; line-height:1.65; margin-bottom:20px; flex:1; }
+.limited-note { background:#fff5f5; border:1px solid #ffd0d0; padding:10px 14px; font-size:12px; color:#e63030; font-weight:600; margin-bottom:20px; display:none; }
+.limited-note.show { display:block; }
+.btn-purchase { width:100%; padding:15px; background:#0a0a0a; color:#fff; border:none; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
+.btn-purchase:hover { background:#222; }
+.btn-cart { width:100%; padding:13px; background:transparent; color:#0a0a0a; border:1px solid #e8e8e8; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; margin-top:8px; }
+.btn-cart:hover { background:#f5f5f5; }
+
+/* PURCHASE MODAL */
+.purchase-modal { background:#fff; width:460px; max-width:95vw; padding:44px; animation:mi 0.3s ease; }
+.pm-title { font-family:'Bebas Neue',sans-serif; font-size:34px; margin-bottom:8px; }
+.pm-sub { font-size:14px; color:#888; line-height:1.55; margin-bottom:28px; }
+.contact-links { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+.contact-link { display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid #e8e8e8; text-decoration:none; color:#0a0a0a; transition:background 0.15s; }
+.contact-link:hover { background:#f5f5f5; }
+.contact-icon { font-size:22px; flex-shrink:0; }
+.contact-type { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.2em; color:#aaa; text-transform:uppercase; margin-bottom:2px; }
+.contact-handle { font-size:16px; font-weight:700; }
+.pay-note { background:#f9f9f9; padding:14px; font-size:12px; color:#888; line-height:1.6; border-left:2px solid #0a0a0a; }
+
+/* CART */
+.cart-drawer { position:fixed; right:0; top:0; bottom:0; width:380px; background:#fff; border-left:1px solid #e8e8e8; z-index:700; transform:translateX(100%); transition:transform 0.3s cubic-bezier(0.16,1,0.3,1); display:flex; flex-direction:column; }
+.cart-drawer.open { transform:translateX(0); }
+.cart-head { padding:20px 24px; border-bottom:1px solid #e8e8e8; display:flex; align-items:center; justify-content:space-between; }
+.cart-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:0.05em; }
+.cart-x { background:none; border:1px solid #e8e8e8; width:30px; height:30px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; transition:all 0.2s; }
+.cart-x:hover { background:#0a0a0a; color:#fff; }
+.cart-body { flex:1; overflow-y:auto; }
+.cart-empty-msg { padding:60px 24px; text-align:center; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.15em; color:#ccc; }
+.cart-item { padding:16px 24px; border-bottom:1px solid #e8e8e8; display:flex; gap:14px; align-items:center; }
+.cart-item-photo { width:52px; height:52px; background:#f5f5f5; flex-shrink:0; overflow:hidden; }
+.cart-item-photo img { width:100%; height:100%; object-fit:cover; }
+.cart-item-photo-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:20px; }
+.cart-item-info { flex:1; min-width:0; }
+.cart-item-name { font-size:13px; font-weight:700; }
+.cart-item-brand { font-family:'DM Mono',monospace; font-size:9px; color:#aaa; letter-spacing:0.12em; margin-top:1px; }
+.cart-item-price { font-family:'DM Mono',monospace; font-size:12px; margin-top:4px; }
+.cart-remove { background:none; border:none; color:#ccc; cursor:pointer; font-size:16px; transition:color 0.2s; flex-shrink:0; }
+.cart-remove:hover { color:#e63030; }
+.cart-foot { padding:20px 24px; border-top:1px solid #e8e8e8; }
+.cart-total-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.cart-total-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:#aaa; text-transform:uppercase; }
+.cart-total-val { font-family:'DM Mono',monospace; font-size:18px; }
+.cart-checkout { width:100%; padding:14px; background:#0a0a0a; color:#fff; border:none; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
+.cart-checkout:hover { background:#222; }
+.cart-delivery-note { text-align:center; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.12em; color:#bbb; margin-top:8px; }
+
+/* CONTACT */
+#page-contact { padding:80px 32px; }
+.page-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(56px,9vw,110px); line-height:0.9; margin-bottom:8px; }
+.page-sub { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.25em; color:#bbb; text-transform:uppercase; margin-bottom:48px; }
+.contact-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#e8e8e8; max-width:700px; border:1px solid #e8e8e8; }
+.contact-card { background:#fff; padding:28px; text-decoration:none; color:#0a0a0a; display:block; transition:background 0.15s; }
+.contact-card:hover { background:#f9f9f9; }
+.cc-icon { font-size:32px; margin-bottom:12px; }
+.cc-type { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.2em; color:#aaa; text-transform:uppercase; margin-bottom:4px; }
+.cc-handle { font-size:18px; font-weight:800; }
+
+/* REQUESTS */
+#page-requests { padding:80px 32px; max-width:640px; }
+.req-desc { font-size:16px; color:#888; line-height:1.6; margin-bottom:40px; max-width:480px; }
+.req-form { display:flex; flex-direction:column; gap:18px; }
+.fg { display:flex; flex-direction:column; gap:6px; }
+.fl { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; color:#888; text-transform:uppercase; }
+.fi { background:#f9f9f9; border:1px solid #e8e8e8; padding:12px 14px; font-family:'Darker Grotesque',sans-serif; font-size:15px; outline:none; transition:border-color 0.2s; color:#0a0a0a; width:100%; }
+.fi:focus { border-color:#0a0a0a; background:#fff; }
+.fi::placeholder { color:#ccc; }
+textarea.fi { min-height:110px; resize:vertical; }
+.req-submit { background:#0a0a0a; color:#fff; border:none; padding:13px 40px; font-family:'Darker Grotesque',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
+.req-submit:hover { background:#222; }
+.req-success { background:#f9f9f9; border:1px solid #e8e8e8; border-left:2px solid #0a0a0a; padding:18px 20px; font-size:14px; color:#888; display:none; margin-top:8px; }
+.req-success.show { display:block; }
+
+/* TICKER */
+.ticker-bar { background:#0a0a0a; overflow:hidden; padding:9px 0; }
+.ticker-inner { display:flex; gap:40px; animation:tick 22s linear infinite; white-space:nowrap; }
+.ticker-item { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.25em; color:rgba(255,255,255,0.35); flex-shrink:0; text-transform:uppercase; }
+.ticker-item b { color:#e63030; margin-right:6px; }
+@keyframes tick { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+.empty-grid { grid-column:1/-1; padding:80px; text-align:center; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.2em; color:#ccc; }
+.loading-grid { grid-column:1/-1; padding:60px; text-align:center; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.2em; color:#ccc; }
+
+.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(70px); background:#0a0a0a; color:#fff; padding:11px 22px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.15em; z-index:9999; transition:transform 0.3s; white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+@media(max-width:768px) {
+  .product-grid { grid-template-columns:repeat(2,1fr); }
+  .product-card:nth-child(4n) { border-right:1px solid #e8e8e8; }
+  .product-card:nth-child(2n) { border-right:none; }
+  .product-modal { grid-template-columns:1fr; max-height:95vh; }
+  .modal-gallery { max-height:50vw; }
+  nav { padding:8px 12px; height:auto; min-height:56px; flex-wrap:wrap; gap:4px; }
+  .nav-logo { font-size:16px; white-space:nowrap; }
+  .nav-center { gap:8px; }
+  .nav-link { font-size:10px; letter-spacing:0.08em; }
+  .shop-header { flex-direction:column; align-items:flex-start; gap:8px; padding:32px 20px 16px; }
+  .shop-meta { text-align:left; }
+  .filter-bar { padding:10px 20px; gap:16px; }
+  .page { padding-top:0; }
+}
+</style>
+</head>
+<body>
+
+<!-- WELCOME -->
+<div id="welcome">
+  <div class="welcome-grid"></div>
+  <div class="welcome-inner">
+    <div class="welcome-tag">Massachusetts · Est. 2024</div>
+    <div class="welcome-name">Shop<br>With<br><span>Luca</span></div>
+    <div class="welcome-loc">Massachusetts' Most Trusted Vendor</div>
+    <div class="review-wrap">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text" id="review-text"></div>
+    </div>
+    <button class="enter-btn" onclick="enterSite()">Enter Shop</button>
+  </div>
+</div>
+
+<!-- SITE -->
+<div id="site">
+  <nav>
+    <div class="nav-logo" onclick="showPage('shop')">Shop With Luca</div>
+    <div class="nav-center">
+      <button class="nav-link active" onclick="showPage('shop')" id="nav-shop">Shop</button>
+      <button class="nav-link" onclick="showPage('contact')" id="nav-contact">Contact</button>
+      <button class="nav-link" onclick="showPage('requests')" id="nav-requests">Custom Requests</button>
+    </div>
+    <div class="nav-right">
+      <button class="cart-btn" onclick="toggleCart()">Cart <span class="cart-count" id="cart-count">0</span></button>
+    </div>
+  </nav>
+
+  <div class="ticker-bar" style="margin-top:56px">
+    <div class="ticker-inner" id="ticker-inner"></div>
+  </div>
+
+  <!-- SHOP -->
+  <div class="page active" id="page-shop">
+    <div class="shop-header">
+      <div class="shop-title">Shop<br>With <span>Luca</span></div>
+      <div class="shop-meta">Pay On Delivery · Massachusetts</div>
+    </div>
+    <div class="filter-bar" id="filter-bar"></div>
+    <div class="product-grid" id="product-grid"><div class="loading-grid">Loading...</div></div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="page" id="page-contact">
+    <div class="page-title">Get In<br>Touch</div>
+    <div class="page-sub">// reach out to place an order</div>
+    <div class="contact-cards">
+      <a class="contact-card" href="https://snapchat.com/add/lucasneakers" target="_blank">
+        <div class="cc-icon">👻</div><div class="cc-type">Snapchat</div><div class="cc-handle">@lucasneakers</div>
+      </a>
+      <a class="contact-card" href="https://instagram.com/lucasneakers" target="_blank">
+        <div class="cc-icon">📸</div><div class="cc-type">Instagram</div><div class="cc-handle">@lucasneakers</div>
+      </a>
+      <a class="contact-card" href="#">
+        <div class="cc-icon">📱</div><div class="cc-type">Phone / Text</div><div class="cc-handle">DM for number</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- REQUESTS -->
+  <div class="page" id="page-requests">
+    <div class="page-title">Custom<br>Request</div>
+    <div class="page-sub">// tell luca what you want stocked</div>
+    <div class="req-desc">Can't find what you're looking for? Submit a request and Luca will see if he can source it. Sneakers, apparel, accessories — just ask.</div>
+    <form class="req-form" onsubmit="submitRequest(event)">
+      <div class="fg"><label class="fl">Your Name</label><input type="text" class="fi" id="rn" placeholder="First name is fine" required></div>
+      <div class="fg"><label class="fl">Snapchat or Instagram</label><input type="text" class="fi" id="rc" placeholder="@yourhandle" required></div>
+      <div class="fg"><label class="fl">What do you want?</label><textarea class="fi" id="ri" placeholder="e.g. Travis Scott Jordan 1 in size 10, Chrome Hearts hoodie size L..." required></textarea></div>
+      <div class="fg"><label class="fl">Budget (optional)</label><input type="text" class="fi" id="rb" placeholder="e.g. under $500"></div>
+      <button type="submit" class="req-submit">Send Request</button>
+    </form>
+    <div class="req-success" id="req-success">✓ Request sent — Luca will reach out within 24 hours.</div>
+  </div>
+</div>
+
+<!-- CART -->
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-head">
+    <div class="cart-title">Your Cart</div>
+    <button class="cart-x" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-body" id="cart-body"><div class="cart-empty-msg">CART IS EMPTY</div></div>
+  <div class="cart-foot">
+    <div class="cart-total-row">
+      <div class="cart-total-label">Total</div>
+      <div class="cart-total-val" id="cart-total">$0</div>
+    </div>
+    <button class="cart-checkout" onclick="openPurchaseModal()">Place Order</button>
+    <div class="cart-delivery-note">Pay in person or on delivery</div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="overlay" id="product-overlay" onclick="closeProductOverlay(event)">
+  <div class="product-modal">
+    <!-- GALLERY -->
+    <div class="modal-gallery">
+      <div class="main-photo" id="main-photo">
+        <div class="main-photo-placeholder" id="main-placeholder">📦</div>
+        <button class="gallery-arrow prev hidden" id="arrow-prev" onclick="galleryPrev()">‹</button>
+        <button class="gallery-arrow next hidden" id="arrow-next" onclick="galleryNext()">›</button>
+      </div>
+      <div class="thumb-strip" id="thumb-strip"></div>
+    </div>
+    <!-- INFO -->
+    <div class="modal-info">
+      <button class="modal-close" onclick="closeProductModal()">✕</button>
+      <div class="modal-brand" id="modal-brand"></div>
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-cat" id="modal-cat"></div>
+      <div class="modal-price" id="modal-price"></div>
+      <div class="limited-note" id="modal-limited">⚡ Limited Quantity — Get it while it lasts</div>
+      <div class="modal-label">Available Sizes</div>
+      <div class="sizes-row" id="modal-sizes"></div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <button class="btn-purchase" onclick="openPurchaseModal()">Purchase — Pay on Delivery</button>
+      <button class="btn-cart" onclick="addToCartFromModal()">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<!-- PURCHASE MODAL -->
+<div class="overlay" id="purchase-overlay" onclick="closePurchaseOverlay(event)">
+  <div class="purchase-modal">
+    <button class="modal-close" style="display:flex;margin-left:auto;margin-bottom:16px" onclick="closePurchaseModal()">✕</button>
+    <div class="pm-title">Ready to Order?</div>
+    <div class="pm-sub">All payments are made in person or upon delivery. Reach out to Luca on Snapchat or Instagram to arrange your order.</div>
+    <div class="contact-links">
+      <a class="contact-link" href="https://snapchat.com/add/lucasneakers" target="_blank">
+        <div class="contact-icon">👻</div>
+        <div><div class="contact-type">Snapchat</div><div class="contact-handle">@lucasneakers</div></div>
+      </a>
+      <a class="contact-link" href="https://instagram.com/lucasneakers" target="_blank">
+        <div class="contact-icon">📸</div>
+        <div><div class="contact-type">Instagram</div><div class="contact-handle">@lucasneakers</div></div>
+      </a>
+    </div>
+    <div class="pay-note">💬 DM Luca with your order. Payment accepted via cash, Venmo, or Cash App — all on delivery or pickup.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient('https://zvrypvsndhkirxockflg.supabase.co','sb_publishable_phRSB9e426qhCCHJ_WEpVg_W_Y2IYwC');
+
+// REVIEWS
+const reviews = ["Got me what I needed fast and payment was easy","Legit seller, no cap. Will be back for sure","Had my Jordan 1s in hand same week, crazy fast","Best reseller in Mass, period","Super easy to work with, great communication","Prices are fair and everything came authentic","Got a Chrome Hearts hoodie for way less than retail","Snapchatted Luca and had my order sorted in an hour","Never had an issue, always comes through","Only person I trust for sneakers in Massachusetts","Fast, reliable, real deal. 5 stars every time","Got exactly what I asked for, no stress","Payment on delivery is a huge plus, super trustworthy","Found stuff here I couldn't find anywhere else","Luca always delivers, literally and figuratively","Third time buying, never disappointed","Rare finds at good prices, this guy is plugged in","Easy process start to finish, highly recommend","Got my Yeezys before the hype died down, thank you","Solid plug, real sneakerhead energy","No sketchy stuff, straight up legit seller","Quick replies and fast turnaround, love it","Hooked me up with a pair I was hunting for months","Came through on a tight timeline, respect","Great seller, even better person to deal with","Found my grail here, honestly didn't expect that","Smooth transaction, zero problems","Will always come here first before checking StockX","Real customer service energy, not just some random reseller","Told my whole friend group about this guy","Saved me like $200 compared to GOAT prices","Trusted vendor, been buying for over a year now","Delivered to my door in 2 days, no cap","Everything was deadstock DS, exactly as described","Best experience I've had buying sneakers online","Luca came through when nobody else had the size","Communication on point, delivered on time","Finally a local plug that's actually reliable","Prices are competitive and service is next level","Got a limited pair I thought was sold out everywhere"];
+
+let rIdx = 0;
+function nextReview() {
+  const el = document.getElementById('review-text');
+  if (!el) return;
+  el.style.opacity = 0;
+  setTimeout(() => { rIdx = Math.floor(Math.random()*reviews.length); el.textContent = '"'+reviews[rIdx]+'"'; el.style.opacity=1; }, 400);
+}
+document.getElementById('review-text').textContent = '"'+reviews[0]+'"';
+setInterval(nextReview, 3500);
+
+// WELCOME
+function enterSite() {
+  localStorage.setItem('swl_v','1');
+  const w = document.getElementById('welcome');
+  w.style.transition='opacity 0.5s'; w.style.opacity=0;
+  setTimeout(()=>{ w.style.display='none'; document.getElementById('site').style.display='block'; loadListings(); },500);
+}
+window.addEventListener('load',()=>{ if(localStorage.getItem('swl_v')){ document.getElementById('welcome').style.display='none'; document.getElementById('site').style.display='block'; loadListings(); } });
+
+// TICKER
+const tItems=['Pay On Delivery','Massachusetts','Sneakers','Apparel','Accessories','Limited Drops','DM To Order','Authenticated Pieces','Fast Delivery','Shop With Luca'];
+document.getElementById('ticker-inner').innerHTML=[...tItems,...tItems].map(t=>`<div class="ticker-item"><b>★</b>${t}</div>`).join('');
+
+// NAV
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('nav-'+p)?.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// LISTINGS
+let allListings=[], currentListing=null, catFilter='all', brandFilter='all';
+
+async function loadListings() {
+  const{data,error}=await sb.from('listings').select('*').eq('active',true).eq('client_slug','sneakers-by-luca').order('created_at',{ascending:false});
+  if(error){document.getElementById('product-grid').innerHTML='<div class="empty-grid">Could not load listings.</div>';return;}
+  allListings=data||[];
+  buildFilters();
+  renderGrid();
+}
+
+function buildFilters() {
+  const cats=[...new Set(allListings.map(l=>l.category).filter(Boolean))];
+  const brands=[...new Set(allListings.map(l=>l.brand).filter(Boolean))];
+  let html=`<div class="filter-group"><span class="filter-group-label">Type:</span><button class="filter-btn active" onclick="setFilter('category','all',this)">All</button>${cats.map(c=>`<button class="filter-btn" onclick="setFilter('category','${c}',this)">${c}</button>`).join('')}</div>`;
+  if(brands.length) html+=`<div class="filter-group"><span class="filter-group-label">Brand:</span><button class="filter-btn active" onclick="setFilter('brand','all',this)">All</button>${brands.map(b=>`<button class="filter-btn" onclick="setFilter('brand','${b}',this)">${b}</button>`).join('')}</div>`;
+  document.getElementById('filter-bar').innerHTML=html;
+}
+
+function setFilter(type,val,btn) {
+  if(type==='category') catFilter=val; else brandFilter=val;
+  btn.closest('.filter-group').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
+}
+
+function getFiltered() { return allListings.filter(l=>(catFilter==='all'||l.category===catFilter)&&(brandFilter==='all'||l.brand===brandFilter)); }
+
+function getPhotos(l) {
+  const photos=[];
+  if(l.photos&&Array.isArray(l.photos)&&l.photos.length) photos.push(...l.photos);
+  else if(l.photo_url) photos.push(l.photo_url);
+  return photos;
+}
+
+function renderGrid() {
+  const filtered=getFiltered();
+  const grid=document.getElementById('product-grid');
+  if(!filtered.length){grid.innerHTML='<div class="empty-grid">No items found</div>';return;}
+  grid.innerHTML=filtered.map((l,i)=>{
+    const photos=getPhotos(l);
+    const thumb=photos[0]||null;
+    return `<div class="product-card" onclick="openProduct('${l.id}')" style="animation:fu 0.4s ease ${i*0.04}s both">
+      <div class="product-photo">
+        ${thumb?`<img src="${thumb}" alt="${l.name}" loading="lazy">`:'<div class="product-photo-placeholder">📦</div>'}
+        ${l.limited?'<div class="limited-badge">Limited</div>':''}
+        ${photos.length>1?`<div class="photo-count-badge">+${photos.length} photos</div>`:''}
+      </div>
+      <div class="product-info">
+        <div class="product-info-name">${l.name}</div>
+        <div class="product-info-brand">${l.brand||l.category||''}</div>
+        <div class="product-info-bottom">
+          <div class="product-price">${l.price?'$'+Number(l.price).toLocaleString():'DM for price'}</div>
+          <button class="quick-add" onclick="event.stopPropagation();quickAdd('${l.id}')" title="Add to cart">+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// GALLERY STATE
+let galleryPhotos=[], galleryIdx=0;
+
+function openProduct(id) {
+  const l=allListings.find(x=>x.id===id);
+  if(!l)return;
+  currentListing=l;
+  galleryPhotos=getPhotos(l);
+  galleryIdx=0;
+  renderGallery();
+  document.getElementById('modal-brand').textContent=l.brand||'';
+  document.getElementById('modal-name').textContent=l.name;
+  document.getElementById('modal-cat').textContent=l.category||'';
+  document.getElementById('modal-price').textContent=l.price?'$'+Number(l.price).toLocaleString():'DM for price';
+  document.getElementById('modal-limited').className='limited-note'+(l.limited?' show':'');
+  document.getElementById('modal-desc').textContent=l.description||'';
+  const sizes=l.sizes?(Array.isArray(l.sizes)?l.sizes:l.sizes.split(',')):[];
+  document.getElementById('modal-sizes').innerHTML=sizes.length?sizes.map(s=>`<div class="size-chip">${s.trim()}</div>`).join(''):'<div class="size-chip">One Size / DM for sizes</div>';
+  document.getElementById('product-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function renderGallery() {
+  const mainPhoto=document.getElementById('main-photo');
+  const thumbStrip=document.getElementById('thumb-strip');
+  const prevBtn=document.getElementById('arrow-prev');
+  const nextBtn=document.getElementById('arrow-next');
+
+  // Main image
+  if(galleryPhotos.length) {
+    mainPhoto.innerHTML=`
+      <img src="${galleryPhotos[galleryIdx]}" alt="product photo" style="width:100%;height:100%;object-fit:cover;display:block">
+      <button class="gallery-arrow prev ${galleryPhotos.length<2?'hidden':''}" id="arrow-prev" onclick="galleryPrev()">‹</button>
+      <button class="gallery-arrow next ${galleryPhotos.length<2?'hidden':''}" id="arrow-next" onclick="galleryNext()">›</button>`;
+  } else {
+    mainPhoto.innerHTML='<div class="main-photo-placeholder">📦</div>';
+  }
+
+  // Thumbnails
+  if(galleryPhotos.length>1) {
+    thumbStrip.innerHTML=galleryPhotos.map((url,i)=>`<img src="${url}" class="thumb ${i===galleryIdx?'active':''}" onclick="setGalleryIdx(${i})" alt="photo ${i+1}" loading="lazy">`).join('');
+    thumbStrip.style.display='flex';
+  } else {
+    thumbStrip.innerHTML='';
+    thumbStrip.style.display='none';
+  }
+}
+
+function galleryPrev() { if(galleryIdx>0){galleryIdx--;renderGallery();} }
+function galleryNext() { if(galleryIdx<galleryPhotos.length-1){galleryIdx++;renderGallery();} }
+function setGalleryIdx(i) { galleryIdx=i; renderGallery(); }
+
+function closeProductModal(){document.getElementById('product-overlay').classList.remove('open');document.body.style.overflow='';}
+function closeProductOverlay(e){if(e.target===document.getElementById('product-overlay'))closeProductModal();}
+
+// CART
+let cart=[];
+function quickAdd(id){const l=allListings.find(x=>x.id===id);if(l){cart.push(l);updateCart();showToast(l.name+' added');}}
+function addToCartFromModal(){if(currentListing){cart.push(currentListing);updateCart();closeProductModal();showToast(currentListing.name+' added');}}
+function removeFromCart(i){cart.splice(i,1);updateCart();}
+function updateCart(){
+  document.getElementById('cart-count').textContent=cart.length;
+  const total=cart.reduce((s,i)=>s+(parseFloat(i.price)||0),0);
+  document.getElementById('cart-total').textContent=total?'$'+total.toLocaleString():'$0';
+  const body=document.getElementById('cart-body');
+  if(!cart.length){body.innerHTML='<div class="cart-empty-msg">CART IS EMPTY</div>';return;}
+  const photos_first=l=>getPhotos(l)[0]||null;
+  body.innerHTML=cart.map((l,i)=>`
+    <div class="cart-item">
+      <div class="cart-item-photo">${photos_first(l)?`<img src="${photos_first(l)}" alt="${l.name}">`:'<div class="cart-item-photo-placeholder">📦</div>'}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${l.name}</div>
+        <div class="cart-item-brand">${l.brand||l.category||''}</div>
+        <div class="cart-item-price">${l.price?'$'+Number(l.price).toLocaleString():'DM for price'}</div>
+      </div>
+      <button class="cart-remove" onclick="removeFromCart(${i})">✕</button>
+    </div>`).join('');
+}
+function toggleCart(){document.getElementById('cart-drawer').classList.toggle('open');}
+function openPurchaseModal(){document.getElementById('product-overlay').classList.remove('open');document.getElementById('purchase-overlay').classList.add('open');document.body.style.overflow='hidden';}
+function closePurchaseModal(){document.getElementById('purchase-overlay').classList.remove('open');document.body.style.overflow='';}
+function closePurchaseOverlay(e){if(e.target===document.getElementById('purchase-overlay'))closePurchaseModal();}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeProductModal();closePurchaseModal();}
+  if(e.key==='ArrowLeft')galleryPrev();
+  if(e.key==='ArrowRight')galleryNext();
+});
+
+// REQUESTS
+async function submitRequest(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('.req-submit');
+  btn.textContent='Sending...';btn.disabled=true;
+  await sb.from('requests').insert({client_slug:'sneakers-by-luca',name:document.getElementById('rn').value,contact:document.getElementById('rc').value,item:document.getElementById('ri').value,budget:document.getElementById('rb').value});
+  btn.textContent='Send Request';btn.disabled=false;
+  document.getElementById('req-success').classList.add('show');
+  e.target.reset();
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+</script>
+</body>
+</html>
+
