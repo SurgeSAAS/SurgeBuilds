@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shop With Luca</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e63030'/><text y='78' x='18' font-size='78' font-family='Arial Black,sans-serif' font-weight='900' fill='white'>L</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Darker+Grotesque:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -164,7 +165,7 @@ nav { position:fixed; top:0; left:0; right:0; z-index:500; background:#fff; bord
 #page-contact { padding:80px 32px; }
 .page-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(56px,9vw,110px); line-height:0.9; margin-bottom:8px; }
 .page-sub { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.25em; color:#bbb; text-transform:uppercase; margin-bottom:48px; }
-.contact-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#e8e8e8; max-width:700px; border:1px solid #e8e8e8; }
+.contact-cards { display:grid; grid-template-columns:1fr; gap:1px; background:#e8e8e8; max-width:400px; border:1px solid #e8e8e8; }
 .contact-card { background:#fff; padding:28px; text-decoration:none; color:#0a0a0a; display:block; transition:background 0.15s; }
 .contact-card:hover { background:#f9f9f9; }
 .cc-icon { font-size:32px; margin-bottom:12px; }
@@ -203,8 +204,11 @@ textarea.fi { min-height:110px; resize:vertical; }
   .product-grid { grid-template-columns:repeat(2,1fr); }
   .product-card:nth-child(4n) { border-right:1px solid #e8e8e8; }
   .product-card:nth-child(2n) { border-right:none; }
-  .product-modal { grid-template-columns:1fr; max-height:95vh; }
-  .modal-gallery { max-height:50vw; }
+  .product-modal { grid-template-columns:1fr; max-height:95vh; overflow-y:auto; }
+  .modal-gallery { max-height:55vw; min-height:55vw; flex-shrink:0; }
+  .modal-info { overflow-y:visible; padding:20px; }
+  .modal-name { font-size:28px; }
+  .modal-price { font-size:20px; }
   nav { padding:8px 12px; height:auto; min-height:56px; flex-wrap:wrap; gap:4px; }
   .nav-logo { font-size:16px; white-space:nowrap; }
   .nav-center { gap:8px; }
@@ -266,14 +270,8 @@ textarea.fi { min-height:110px; resize:vertical; }
     <div class="page-title">Get In<br>Touch</div>
     <div class="page-sub">// reach out to place an order</div>
     <div class="contact-cards">
-      <a class="contact-card" href="https://snapchat.com/add/lucasneakers" target="_blank">
-        <div class="cc-icon">👻</div><div class="cc-type">Snapchat</div><div class="cc-handle">@lucasneakers</div>
-      </a>
-      <a class="contact-card" href="https://instagram.com/lucasneakers" target="_blank">
-        <div class="cc-icon">📸</div><div class="cc-type">Instagram</div><div class="cc-handle">@lucasneakers</div>
-      </a>
-      <a class="contact-card" href="#">
-        <div class="cc-icon">📱</div><div class="cc-type">Phone / Text</div><div class="cc-handle">DM for number</div>
+      <a class="contact-card" href="https://snapchat.com/add/lucafrm781" target="_blank">
+        <div class="cc-icon">👻</div><div class="cc-type">Snapchat</div><div class="cc-handle">@lucafrm781</div>
       </a>
     </div>
   </div>
@@ -347,13 +345,9 @@ textarea.fi { min-height:110px; resize:vertical; }
     <div class="pm-title">Ready to Order?</div>
     <div class="pm-sub">All payments are made in person or upon delivery. Reach out to Luca on Snapchat or Instagram to arrange your order.</div>
     <div class="contact-links">
-      <a class="contact-link" href="https://snapchat.com/add/lucasneakers" target="_blank">
+      <a class="contact-link" href="https://snapchat.com/add/lucafrm781" target="_blank">
         <div class="contact-icon">👻</div>
-        <div><div class="contact-type">Snapchat</div><div class="contact-handle">@lucasneakers</div></div>
-      </a>
-      <a class="contact-link" href="https://instagram.com/lucasneakers" target="_blank">
-        <div class="contact-icon">📸</div>
-        <div><div class="contact-type">Instagram</div><div class="contact-handle">@lucasneakers</div></div>
+        <div><div class="contact-type">Snapchat</div><div class="contact-handle">@lucafrm781</div></div>
       </a>
     </div>
     <div class="pay-note">💬 DM Luca with your order. Payment accepted via cash, Venmo, or Cash App — all on delivery or pickup.</div>
