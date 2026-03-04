@@ -348,7 +348,7 @@ select.form-input{cursor:pointer}
     <div class="page" id="page-schedule">
       <div class="page-header"><div class="page-title"><span>Schedule</span></div><div class="page-sub">Set weekly availability & overrides</div></div>
       <div class="card" style="margin-bottom:20px;">
-        <div class="card-head"><span class="card-title">Default Weekly Hours</span></div>
+        <div class="card-head"><span class="card-title">Default Weekly Hours</span><button class="btn btn-cyan btn-sm" onclick="saveSchedule()">Save Schedule</button></div>
         <div class="card-body">
           <div class="schedule-day"><span class="schedule-day-name">Monday</span><div class="schedule-toggle on" onclick="this.classList.toggle('on')"></div><div class="schedule-times"><input type="time" class="form-input" value="08:00"><span class="schedule-dash">—</span><input type="time" class="form-input" value="17:00"></div></div>
           <div class="schedule-day"><span class="schedule-day-name">Tuesday</span><div class="schedule-toggle on" onclick="this.classList.toggle('on')"></div><div class="schedule-times"><input type="time" class="form-input" value="08:00"><span class="schedule-dash">—</span><input type="time" class="form-input" value="17:00"></div></div>
@@ -522,7 +522,7 @@ select.form-input{cursor:pointer}
           <button class="btn btn-outline" style="margin-top:8px">+ Add Review</button>
         </div>
 
-        <div style="margin-top:16px"><button class="btn btn-cyan">Save Home Page Changes</button></div>
+        <div style="margin-top:16px"><button class="btn btn-cyan" onclick="saveWebsiteSection('home')">Save Home Page Changes</button></div>
       </div>
 
       <!-- SERVICES TAB -->
@@ -541,7 +541,7 @@ select.form-input{cursor:pointer}
             <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="font-weight:600;color:var(--text)">Exterior Only</span><span class="tag tag-green">Live</span></div>
           </div>
         </div>
-        <div style="margin-top:16px"><button class="btn btn-cyan">Save Services Page</button></div>
+        <div style="margin-top:16px"><button class="btn btn-cyan" onclick="saveWebsiteSection('ws-services')">Save Services Page</button></div>
       </div>
 
       <!-- ABOUT TAB -->
@@ -569,7 +569,7 @@ Your car, our passion — experience the Platinum difference.</textarea>
             <div class="upload-zone-sub">Supports MP4, MOV, WebM · Max 100MB</div>
           </div>
         </div>
-        <div style="margin-top:16px"><button class="btn btn-cyan">Save About Page</button></div>
+        <div style="margin-top:16px"><button class="btn btn-cyan" onclick="saveWebsiteSection('about')">Save About Page</button></div>
       </div>
 
       <!-- GALLERY TAB -->
@@ -615,7 +615,7 @@ Your car, our passion — experience the Platinum difference.</textarea>
             <div class="photo-thumb"><div class="thumb-icon">📷</div><div class="photo-thumb-actions"><button class="photo-thumb-btn star" title="Featured">★</button><button class="photo-thumb-btn del" title="Delete">✕</button></div></div>
           </div>
         </div>
-        <div style="margin-top:16px"><button class="btn btn-cyan">Save Gallery Page</button></div>
+        <div style="margin-top:16px"><button class="btn btn-cyan" onclick="saveWebsiteSection('gallery')">Save Gallery Page</button></div>
       </div>
 
       <!-- CONTACT TAB -->
@@ -638,7 +638,7 @@ Your car, our passion — experience the Platinum difference.</textarea>
             <div class="form-group"><label class="form-label">TikTok URL</label><input class="form-input" placeholder="https://tiktok.com/..."></div>
           </div>
         </div>
-        <div style="margin-top:16px"><button class="btn btn-cyan">Save Contact Page</button></div>
+        <div style="margin-top:16px"><button class="btn btn-cyan" onclick="saveWebsiteSection('contact')">Save Contact Page</button></div>
       </div>
     </div>
 
@@ -674,11 +674,10 @@ Your car, our passion — experience the Platinum difference.</textarea>
   <div class="modal" style="width:440px">
     <div class="modal-head"><span class="modal-title">Add Expense</span><button class="modal-close" onclick="closeCostModal()">✕</button></div>
     <div class="modal-body">
-      <div class="form-row"><div class="form-group"><label class="form-label">Expense Type</label><input class="form-input" placeholder="e.g. Supplies, Gas"></div><div class="form-group"><label class="form-label">Amount ($)</label><input class="form-input" type="number" placeholder="0.00"></div></div>
-      <div class="form-row"><div class="form-group"><label class="form-label">Spent By</label><select class="form-input"><option>Marcus</option><option>Jake</option></select></div><div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date"></div></div>
-      <div class="form-group" style="margin-top:4px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2)"><input type="checkbox" style="accent-color:var(--cyan)"> Mark as recurring (monthly)</label></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Expense Type</label><input class="form-input" id="cost-desc" placeholder="e.g. Supplies, Gas"></div><div class="form-group"><label class="form-label">Amount ($)</label><input class="form-input" type="number" id="cost-amount" placeholder="0.00"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Category</label><input class="form-input" id="cost-category" placeholder="e.g. Supplies, Gas, Insurance"></div><div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="cost-date"></div></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-outline" onclick="closeCostModal()">Cancel</button><button class="btn btn-cyan" onclick="closeCostModal()">Add Expense</button></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeCostModal()">Cancel</button><button class="btn btn-cyan" onclick="saveCost()">Add Expense</button></div>
   </div>
 </div>
 
@@ -717,85 +716,98 @@ Your car, our passion — experience the Platinum difference.</textarea>
 
       <div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2)"><input type="checkbox" checked style="accent-color:var(--cyan)"> Show on customer website</label></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-outline" onclick="closeServiceModal()">Cancel</button><button class="btn btn-cyan" onclick="closeServiceModal()">Add Service</button></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeServiceModal()">Cancel</button><button class="btn btn-cyan" onclick="saveService()">Save Service</button></div>
   </div>
 </div>
 
+
+<!-- OVERRIDE MODAL -->
+<div class="modal-overlay" id="override-modal" onclick="if(event.target===this)closeOverrideModal()">
+  <div class="modal" style="width:440px">
+    <div class="modal-head"><span class="modal-title">Add Date Override</span><button class="modal-close" onclick="closeOverrideModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="override-date"></div>
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-input" id="override-type" onchange="document.getElementById('override-hours').style.display=this.value==='open'?'grid':'none'">
+            <option value="closed">Blocked / Day Off</option>
+            <option value="open">Custom Hours</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row" id="override-hours" style="display:none">
+        <div class="form-group"><label class="form-label">Open Time</label><input class="form-input" type="time" id="override-open" value="08:00"></div>
+        <div class="form-group"><label class="form-label">Close Time</label><input class="form-input" type="time" id="override-close" value="17:00"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Reason (optional)</label><input class="form-input" id="override-reason" placeholder="e.g. Holiday, Vacation"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeOverrideModal()">Cancel</button><button class="btn btn-cyan" onclick="saveOverride()">Add Override</button></div>
+  </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============ SUPABASE ============
-const SUPABASE_URL = 'https://yctegcnochrduriosyqa.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljdGVnY25vY2hyZHVyaW9zeXFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTMwMTgsImV4cCI6MjA4ODIyOTAxOH0.9rjDzD9Ya4PJvEF6ukOdXxfgX5lr4xp58-NiRfsT9MY';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = 'https://zvrypvsndhkirxockflg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2cnlwdnNuZGhraXJ4b2NrZmxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4ODMyMDQsImV4cCI6MjA4NzQ1OTIwNH0.N5a2GHbqEoEqzqjU8Atvmbcjx6079Wez4AaXamDPF2M';
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 
-// Check for existing session on load
-(async function checkSession() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    loginSuccess(session.user);
-  }
-})();
-
+// ============ AUTH ============
 async function attemptLogin() {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-pass').value;
   const btn = document.getElementById('login-btn-el');
   const err = document.getElementById('login-error');
-
-  if (!email || !password) { err.textContent = 'Enter email and password.'; return; }
-
-  btn.textContent = 'SIGNING IN...';
-  btn.disabled = true;
   err.textContent = '';
-
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    err.textContent = error.message || 'Invalid credentials. Try again.';
-    btn.textContent = 'SIGN IN';
-    btn.disabled = false;
-    return;
-  }
-
-  loginSuccess(data.user);
+  btn.textContent = 'Signing in...';
+  btn.disabled = true;
+  try {
+    const { data, error } = await _sb.auth.signInWithPassword({ email, password });
+    if (error) { err.textContent = error.message; btn.textContent = 'Sign In'; btn.disabled = false; return; }
+    loginSuccess(data.user);
+  } catch(e) { err.textContent = 'Network error. Try again.'; btn.textContent = 'Sign In'; btn.disabled = false; }
 }
 
 function loginSuccess(user) {
   currentUser = user;
-  const displayName = user.user_metadata?.display_name || user.email.split('@')[0];
-  const initial = displayName.charAt(0).toUpperCase();
-
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('active');
-  document.getElementById('user-avatar').textContent = initial;
-  document.getElementById('user-display-name').textContent = displayName;
-  document.getElementById('dash-name').textContent = displayName;
+  const name = user.email.split('@')[0];
+  document.getElementById('dash-name').textContent = name;
+  document.getElementById('user-display-name').textContent = name;
+  document.getElementById('user-avatar').textContent = name[0].toUpperCase();
   setDashDate();
   buildCalendar();
+  loadDashboard();
+  loadServices();
+  loadSchedule();
+  loadRevenue();
+  loadCosts();
+  loadActivityLog();
 }
 
-document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
-document.getElementById('login-email').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
-
 async function logout() {
-  await supabase.auth.signOut();
+  await _sb.auth.signOut();
   document.getElementById('app').classList.remove('active');
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('login-email').value = '';
   document.getElementById('login-pass').value = '';
-  document.getElementById('login-error').textContent = '';
-  currentUser = null;
 }
 
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await _sb.auth.getSession();
+  if (session) loginSuccess(session.user);
+  document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
+});
+
+// ============ NAV ============
 function setDashDate() {
   const d = new Date();
   document.getElementById('dash-date').textContent = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }).toUpperCase();
   document.getElementById('dash-today-label').textContent = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 }
 
-// ============ NAV ============
 function showPage(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
@@ -803,7 +815,6 @@ function showPage(id, el) {
   if(el) el.classList.add('active');
 }
 
-// ============ WEBSITE TABS ============
 function showWebTab(id, el) {
   document.querySelectorAll('.web-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('wp-' + id).classList.add('active');
@@ -811,47 +822,67 @@ function showWebTab(id, el) {
   if(el) el.classList.add('active');
 }
 
+// ============ DASHBOARD ============
+async function loadDashboard() {
+  const today = new Date().toISOString().split('T')[0];
+  const { data: bookings } = await _sb.from('bookings').select('*').eq('date', today).neq('status','cancelled');
+  const count = bookings ? bookings.length : 0;
+  const revenue = bookings ? bookings.reduce((s,b) => s + (b.total_price||0), 0) : 0;
+  document.querySelector('.stats-row .stat-card:nth-child(1) .stat-val').textContent = count;
+  document.querySelector('.stats-row .stat-card:nth-child(2) .stat-val').innerHTML = `<span class="currency">$</span>${revenue.toLocaleString()}`;
+
+  const tbody = document.querySelector('#page-dashboard .data-table tbody');
+  if (!bookings || !bookings.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px">No bookings today</td></tr>';
+    return;
+  }
+  tbody.innerHTML = bookings.sort((a,b) => a.time.localeCompare(b.time)).map(b => `
+    <tr>
+      <td class="mono">${b.time}</td>
+      <td>${b.customer_name}</td>
+      <td>${b.service_name}</td>
+      <td class="mono">${b.customer_phone||'—'}</td>
+      <td><span class="tag ${statusTag(b.status)}">${cap(b.status)}</span></td>
+    </tr>`).join('');
+}
+
+function statusTag(s) {
+  return s==='confirmed'?'tag-green':s==='completed'?'tag-cyan':s==='cancelled'?'tag-red':'tag-amber';
+}
+function cap(s) { return s ? s[0].toUpperCase()+s.slice(1) : ''; }
+
 // ============ CALENDAR ============
-const MOCK_BOOKINGS = {
-  '2026-03-04': [
-    { time:'8:00 AM', name:'Marcus Rivera', service:'Full Detail', phone:'(617) 555-0134', address:'42 Oak Street, Boston MA', color:'var(--cyan)' },
-    { time:'10:30 AM', name:'Sarah Chen', service:'Interior Clean', phone:'(617) 555-0291', address:'18 Maple Ave, Cambridge MA', color:'var(--green)' },
-    { time:'1:00 PM', name:'Jake Thompson', service:'Paint Correction', phone:'(508) 555-0177', address:'77 Pine Road, Quincy MA', color:'var(--amber)' },
-    { time:'3:30 PM', name:'Emily Dawson', service:'Exterior Wash + Wax', phone:'(781) 555-0423', address:'5 Birch Lane, Brookline MA', color:'var(--blue)' }
-  ],
-  '2026-03-07': [
-    { time:'9:00 AM', name:'David Park', service:'Interior Clean', phone:'(617) 555-0311', address:'88 Harvard St, Allston MA', color:'var(--green)' },
-    { time:'12:00 PM', name:'Nina Ali', service:'Full Detail', phone:'(781) 555-0199', address:'62 Summer St, Weymouth MA', color:'var(--cyan)' },
-    { time:'3:00 PM', name:'Tom Reeves', service:'Exterior Wash + Wax', phone:'(617) 555-0455', address:'15 Winter St, Dorchester MA', color:'var(--blue)' }
-  ],
-  '2026-03-10': [
-    { time:'8:00 AM', name:'Angela Wu', service:'Ceramic Coating', phone:'(508) 555-0723', address:'201 Main St, Framingham MA', color:'var(--purple)' },
-    { time:'2:00 PM', name:'Derek Lawson', service:'Paint Correction', phone:'(617) 555-0188', address:'44 Court St, Boston MA', color:'var(--amber)' }
-  ],
-  '2026-03-15': [
-    { time:'9:00 AM', name:'Marcus Rivera', service:'Interior Clean', phone:'(617) 555-0134', address:'42 Oak Street, Boston MA', color:'var(--green)' },
-    { time:'1:00 PM', name:'Emily Dawson', service:'Ceramic Coating', phone:'(781) 555-0423', address:'5 Birch Lane, Brookline MA', color:'var(--purple)' }
-  ]
-};
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
+let calBookings = {};
 
-let calYear = 2026, calMonth = 2;
+async function buildCalendar() {
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay = new Date(calYear, calMonth + 1, 0);
+  const start = firstDay.toISOString().split('T')[0];
+  const end = lastDay.toISOString().split('T')[0];
+  const { data } = await _sb.from('bookings').select('*').gte('date', start).lte('date', end).neq('status','cancelled');
+  calBookings = {};
+  (data||[]).forEach(b => { if(!calBookings[b.date]) calBookings[b.date]=[]; calBookings[b.date].push(b); });
+  renderCalendar();
+}
 
-function buildCalendar() {
+function renderCalendar() {
   const grid = document.getElementById('cal-grid');
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('cal-month-label').textContent = months[calMonth] + ' ' + calYear;
   const firstDay = new Date(calYear, calMonth, 1).getDay();
   const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
   const today = new Date();
-  let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => '<div class="cal-day-label">'+d+'</div>').join('');
+  const colors = ['var(--cyan)','var(--green)','var(--amber)','var(--blue)','var(--purple)'];
+  let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="cal-day-label">${d}</div>`).join('');
   for (let i = 0; i < firstDay; i++) html += '<div class="cal-cell empty"></div>';
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const bookings = MOCK_BOOKINGS[dateStr] || [];
+    const bookings = calBookings[dateStr] || [];
     const isToday = (today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d);
-    let dots = bookings.slice(0,4).map(b => '<div class="cal-dot" style="background:'+b.color+'"></div>').join('');
-    let count = bookings.length ? '<div class="cal-booking-count">'+bookings.length+' appt'+(bookings.length>1?'s':'')+'</div>' : '';
-    html += '<div class="cal-cell'+(isToday?' today':'')+'" onclick="openDayModal(\''+dateStr+'\')"><div class="cal-num">'+d+'</div><div class="cal-dots">'+dots+'</div>'+count+'</div>';
+    let dots = bookings.slice(0,4).map((b,i) => `<div class="cal-dot" style="background:${colors[i%colors.length]}"></div>`).join('');
+    let count = bookings.length ? `<div class="cal-booking-count">${bookings.length} appt${bookings.length>1?'s':''}</div>` : '';
+    html += `<div class="cal-cell${isToday?' today':''}" onclick="openDayModal('${dateStr}')"><div class="cal-num">${d}</div><div class="cal-dots">${dots}</div>${count}</div>`;
   }
   grid.innerHTML = html;
 }
@@ -859,26 +890,402 @@ function buildCalendar() {
 function calPrev() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} buildCalendar(); }
 function calNext() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} buildCalendar(); }
 
-function openDayModal(dateStr) {
+async function openDayModal(dateStr) {
   const d = new Date(dateStr + 'T12:00:00');
   document.getElementById('day-modal-title').textContent = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-  const bookings = MOCK_BOOKINGS[dateStr] || [];
   const body = document.getElementById('day-modal-body');
-  if (!bookings.length) {
-    body.innerHTML = '<div style="text-align:center;padding:30px"><div style="font-size:32px;opacity:0.3;margin-bottom:10px">📅</div><div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--text3);letter-spacing:.12em">NO BOOKINGS THIS DAY</div></div>';
-  } else {
-    body.innerHTML = bookings.map(b => '<div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid '+b.color+';border-radius:6px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="font-size:14px;font-weight:600;margin-bottom:2px">'+b.name+'</div><div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--cyan)">'+b.service+'</div></div><div style="font-family:\'Share Tech Mono\',monospace;font-size:11px;color:var(--text2)">'+b.time+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--text2)"><div><span style="color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:8px;letter-spacing:.1em">PHONE</span><br>'+b.phone+'</div><div><span style="color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:8px;letter-spacing:.1em">ADDRESS</span><br>'+b.address+'</div></div><div style="margin-top:10px;display:flex;gap:6px"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-red btn-sm">Cancel</button></div></div>').join('');
-  }
+  body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3)">Loading...</div>';
   document.getElementById('day-modal').classList.add('open');
+  const { data: bookings } = await _sb.from('bookings').select('*').eq('date', dateStr);
+  if (!bookings || !bookings.length) {
+    body.innerHTML = '<div style="text-align:center;padding:30px"><div style="font-size:32px;opacity:0.3;margin-bottom:10px">📅</div><div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--text3);letter-spacing:.12em">NO BOOKINGS THIS DAY</div></div>';
+    return;
+  }
+  body.innerHTML = bookings.sort((a,b)=>a.time.localeCompare(b.time)).map(b => `
+    <div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:6px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:2px">${b.customer_name}</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan)">${b.service_name}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="tag ${statusTag(b.status)}">${cap(b.status)}</span>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2)">${b.time}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--text2);margin-bottom:10px">
+        <div><span style="color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.1em">PHONE</span><br>${b.customer_phone||'—'}</div>
+        <div><span style="color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.1em">ADDRESS</span><br>${b.customer_address||'—'}</div>
+        <div><span style="color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.1em">TOTAL</span><br>$${b.total_price||0}</div>
+        <div><span style="color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.1em">EMAIL</span><br>${b.customer_email||'—'}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        ${b.status!=='completed'?`<button class="btn btn-outline btn-sm" onclick="updateBookingStatus('${b.id}','completed','${dateStr}')">✓ Complete</button>`:''}
+        ${b.status!=='cancelled'?`<button class="btn btn-red btn-sm" onclick="updateBookingStatus('${b.id}','cancelled','${dateStr}')">✕ Cancel</button>`:''}
+        <button class="btn btn-red btn-sm" onclick="deleteBooking('${b.id}','${dateStr}')">Delete</button>
+      </div>
+    </div>`).join('');
 }
+
+async function updateBookingStatus(id, status, dateStr) {
+  await _sb.from('bookings').update({ status }).eq('id', id);
+  await logActivity(`Updated booking status to ${status}`);
+  openDayModal(dateStr);
+  buildCalendar();
+  loadDashboard();
+}
+
+async function deleteBooking(id, dateStr) {
+  if (!confirm('Delete this booking?')) return;
+  await _sb.from('bookings').delete().eq('id', id);
+  await logActivity('Deleted booking');
+  openDayModal(dateStr);
+  buildCalendar();
+  loadDashboard();
+}
+
 function closeDayModal() { document.getElementById('day-modal').classList.remove('open'); }
 
-// ============ MODALS ============
-function openAddCost() { document.getElementById('cost-modal').classList.add('open'); }
-function closeCostModal() { document.getElementById('cost-modal').classList.remove('open'); }
-function openAddService() { document.getElementById('service-modal').classList.add('open'); }
+// ============ SERVICES ============
+let editingServiceId = null;
+
+async function loadServices() {
+  const { data } = await _sb.from('services').select('*').order('sort_order');
+  renderServicesTable(data||[]);
+}
+
+function renderServicesTable(services) {
+  const tbody = document.querySelector('#services-table tbody');
+  if (!services.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">No services yet. Add one above.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = services.map(s => `
+    <tr>
+      <td style="font-weight:600;color:var(--text)">${s.name}</td>
+      <td class="mono">$${s.price}</td>
+      <td class="mono">${s.duration||'—'}</td>
+      <td class="mono">${(s.addons||[]).length}</td>
+      <td><span class="tag ${s.active?'tag-green':'tag-red'}" style="cursor:pointer" onclick="toggleServiceActive('${s.id}',${s.active})">${s.active?'Live':'Hidden'}</span></td>
+      <td>
+        <button class="btn btn-outline btn-sm" style="margin-right:4px" onclick="editService('${s.id}')">Edit</button>
+        <button class="btn btn-red btn-sm" onclick="deleteService('${s.id}')">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function toggleServiceActive(id, current) {
+  await _sb.from('services').update({ active: !current }).eq('id', id);
+  await logActivity(`Toggled service visibility`);
+  loadServices();
+}
+
+async function deleteService(id) {
+  if (!confirm('Delete this service?')) return;
+  await _sb.from('services').delete().eq('id', id);
+  await logActivity('Deleted service');
+  loadServices();
+}
+
+async function editService(id) {
+  const { data } = await _sb.from('services').select('*').eq('id', id).single();
+  if (!data) return;
+  editingServiceId = id;
+  document.querySelector('#service-modal .modal-title').textContent = 'Edit Service';
+  document.querySelector('#service-modal .modal-body input[placeholder*="Platinum"]').value = data.name;
+  const priceInputs = document.querySelectorAll('#service-modal .modal-body input[type="number"]');
+  priceInputs[0].value = data.price;
+  const durInput = document.querySelectorAll('#service-modal .modal-body input[type="number"]')[1];
+  if(durInput) durInput.value = data.duration||'';
+  const descTA = document.querySelector('#service-modal .modal-body textarea');
+  if(descTA) descTA.value = data.description||'';
+  // Re-render addons
+  const addonList = document.getElementById('addon-list');
+  addonList.innerHTML = '';
+  (data.addons||[]).forEach(a => {
+    const row = document.createElement('div');
+    row.className = 'addon-editor-row';
+    row.innerHTML = `<div class="form-group"><label class="form-label">Name</label><input class="form-input" value="${a.name||''}"></div><div class="form-group"><label class="form-label">Price ($)</label><input class="form-input" type="number" value="${a.price||0}"></div><div style="padding-bottom:4px"><button class="btn btn-red btn-sm" onclick="this.closest('.addon-editor-row').remove()">✕</button></div>`;
+    addonList.appendChild(row);
+  });
+  document.getElementById('service-modal').classList.add('open');
+}
+
+async function saveService() {
+  const name = document.querySelector('#service-modal .modal-body input[placeholder*="Platinum"]').value.trim();
+  const priceInputs = document.querySelectorAll('#service-modal .modal-body input[type="number"]');
+  const price = parseFloat(priceInputs[0].value)||0;
+  const duration = priceInputs[1]?.value||'';
+  const descTA = document.querySelector('#service-modal .modal-body textarea');
+  const description = descTA?.value||'';
+  const addonRows = document.querySelectorAll('#addon-list .addon-editor-row');
+  const addons = Array.from(addonRows).map(r => ({
+    name: r.querySelector('input:first-of-type').value,
+    price: parseFloat(r.querySelector('input[type="number"]').value)||0
+  })).filter(a => a.name);
+  if (!name) { alert('Service name is required'); return; }
+  const payload = { name, price, duration: duration ? duration+' min' : null, description, addons, active: true };
+  if (editingServiceId) {
+    await _sb.from('services').update(payload).eq('id', editingServiceId);
+    await logActivity(`Updated service: ${name}`);
+  } else {
+    await _sb.from('services').insert([payload]);
+    await logActivity(`Added service: ${name}`);
+  }
+  editingServiceId = null;
+  closeServiceModal();
+  loadServices();
+}
+
+function openAddService() {
+  editingServiceId = null;
+  document.querySelector('#service-modal .modal-title').textContent = 'Add Service';
+  document.querySelector('#service-modal .modal-body input[placeholder*="Platinum"]').value = '';
+  document.querySelectorAll('#service-modal .modal-body input[type="number"]').forEach(i => i.value = '');
+  document.querySelectorAll('#service-modal .modal-body textarea').forEach(t => t.value = '');
+  document.getElementById('addon-list').innerHTML = '';
+  document.getElementById('service-modal').classList.add('open');
+}
+
 function closeServiceModal() { document.getElementById('service-modal').classList.remove('open'); }
-function openOverrideModal() { alert('Override modal — will be built in final version'); }
+
+// ============ SCHEDULE ============
+async function loadSchedule() {
+  const { data } = await _sb.from('schedule').select('*').order('day_of_week');
+  if (!data) return;
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const days = document.querySelectorAll('.schedule-day');
+  data.forEach(row => {
+    const dayEl = Array.from(days).find(d => d.querySelector('.schedule-day-name').textContent === dayNames[row.day_of_week]);
+    if (!dayEl) return;
+    const toggle = dayEl.querySelector('.schedule-toggle');
+    const inputs = dayEl.querySelectorAll('input[type="time"]');
+    toggle.classList.toggle('on', row.is_open);
+    inputs[0].value = row.open_time||'08:00';
+    inputs[1].value = row.close_time||'17:00';
+    inputs[0].disabled = !row.is_open;
+    inputs[1].disabled = !row.is_open;
+    toggle.onclick = () => {
+      const isOn = toggle.classList.toggle('on');
+      inputs[0].disabled = !isOn;
+      inputs[1].disabled = !isOn;
+    };
+  });
+  loadOverrides();
+}
+
+async function saveSchedule() {
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const days = document.querySelectorAll('.schedule-day');
+  const updates = Array.from(days).map(dayEl => {
+    const name = dayEl.querySelector('.schedule-day-name').textContent;
+    const dow = dayNames.indexOf(name);
+    const isOpen = dayEl.querySelector('.schedule-toggle').classList.contains('on');
+    const inputs = dayEl.querySelectorAll('input[type="time"]');
+    return { day_of_week: dow, is_open: isOpen, open_time: inputs[0].value, close_time: inputs[1].value };
+  });
+  for (const u of updates) {
+    await _sb.from('schedule').upsert(u, { onConflict: 'day_of_week' });
+  }
+  await logActivity('Updated weekly schedule');
+  alert('Schedule saved!');
+}
+
+async function loadOverrides() {
+  const { data } = await _sb.from('schedule_overrides').select('*').gte('date', new Date().toISOString().split('T')[0]).order('date');
+  const container = document.querySelector('#page-schedule .card:last-child .card-body');
+  if (!data || !data.length) {
+    container.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px 0">No upcoming overrides.</div>';
+    return;
+  }
+  container.innerHTML = data.map(o => `
+    <div class="override-item">
+      <span class="override-date">${new Date(o.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+      <span class="override-detail">${o.is_open ? `Open ${o.open_time}–${o.close_time}` : `Blocked — ${o.reason||'Day off'}`}</span>
+      <button class="btn btn-red btn-sm" onclick="deleteOverride('${o.id}')">Remove</button>
+    </div>`).join('');
+}
+
+async function deleteOverride(id) {
+  await _sb.from('schedule_overrides').delete().eq('id', id);
+  loadOverrides();
+}
+
+function openOverrideModal() { document.getElementById('override-modal').classList.add('open'); }
+function closeOverrideModal() { document.getElementById('override-modal').classList.remove('open'); }
+
+async function saveOverride() {
+  const date = document.getElementById('override-date').value;
+  const type = document.getElementById('override-type').value;
+  const reason = document.getElementById('override-reason').value;
+  const openTime = document.getElementById('override-open').value;
+  const closeTime = document.getElementById('override-close').value;
+  if (!date) { alert('Please select a date'); return; }
+  const payload = {
+    date,
+    is_open: type === 'open',
+    reason: reason || null,
+    open_time: type==='open' ? openTime : null,
+    close_time: type==='open' ? closeTime : null
+  };
+  await _sb.from('schedule_overrides').upsert(payload, { onConflict: 'date' });
+  await logActivity(`Added schedule override for ${date}`);
+  closeOverrideModal();
+  loadOverrides();
+}
+
+// ============ REVENUE ============
+async function loadRevenue() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  const end = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0];
+  const { data: bookings } = await _sb.from('bookings').select('*').gte('date',start).lte('date',end).eq('status','completed');
+  const { data: costs } = await _sb.from('costs').select('*').gte('date',start).lte('date',end);
+  const total = (bookings||[]).reduce((s,b)=>s+(b.total_price||0),0);
+  const totalCosts = (costs||[]).reduce((s,c)=>s+(c.amount||0),0);
+  const profit = total - totalCosts;
+  const statsCards = document.querySelectorAll('#page-revenue .stat-card');
+  statsCards[0].querySelector('.stat-val').innerHTML = `<span class="currency">$</span>${total.toLocaleString()}`;
+  statsCards[0].querySelector('div:last-child').textContent = `${now.toLocaleString('en-US',{month:'long',year:'numeric'})} · ${(bookings||[]).length} bookings`;
+  statsCards[1].querySelector('.stat-val').innerHTML = `<span class="currency">$</span>${Math.max(0,profit).toLocaleString()}`;
+  statsCards[1].querySelector('div:last-child').textContent = `After $${totalCosts.toLocaleString()} in costs`;
+  const tbody = document.querySelector('#page-revenue .data-table tbody');
+  if (!bookings || !bookings.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:24px">No completed bookings this month</td></tr>';
+    return;
+  }
+  tbody.innerHTML = bookings.sort((a,b)=>b.date.localeCompare(a.date)).map(b => `
+    <tr>
+      <td class="mono">${new Date(b.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td>
+      <td>${b.customer_name}</td>
+      <td>${b.service_name}</td>
+      <td class="mono" style="color:var(--green)">+$${b.total_price||0}</td>
+    </tr>`).join('');
+}
+
+// ============ COSTS ============
+async function loadCosts() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  const end = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0];
+  const { data } = await _sb.from('costs').select('*').gte('date',start).lte('date',end).order('date',{ascending:false});
+  const tbody = document.querySelector('#page-costs .data-table tbody');
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">No expenses this month</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td class="mono">${new Date(c.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td>
+      <td>${c.description}</td>
+      <td class="mono" style="color:var(--red)">-$${c.amount}</td>
+      <td>${c.category||'—'}</td>
+      <td>—</td>
+      <td><button class="btn btn-red btn-sm" onclick="deleteCost('${c.id}')">Delete</button></td>
+    </tr>`).join('');
+}
+
+async function deleteCost(id) {
+  if (!confirm('Delete this expense?')) return;
+  await _sb.from('costs').delete().eq('id', id);
+  await logActivity('Deleted expense');
+  loadCosts();
+  loadRevenue();
+}
+
+function openAddCost() { document.getElementById('cost-modal').classList.add('open'); }
+function closeCostModal() {
+  document.getElementById('cost-modal').classList.remove('open');
+  document.getElementById('cost-desc').value = '';
+  document.getElementById('cost-amount').value = '';
+  document.getElementById('cost-date').value = '';
+}
+
+async function saveCost() {
+  const desc = document.getElementById('cost-desc').value.trim();
+  const amount = parseFloat(document.getElementById('cost-amount').value)||0;
+  const date = document.getElementById('cost-date').value || new Date().toISOString().split('T')[0];
+  const category = document.getElementById('cost-category').value.trim();
+  if (!desc || !amount) { alert('Description and amount are required'); return; }
+  await _sb.from('costs').insert([{ description: desc, amount, date, category: category||null }]);
+  await logActivity(`Added expense: ${desc} ($${amount})`);
+  closeCostModal();
+  loadCosts();
+  loadRevenue();
+}
+
+// ============ ACTIVITY LOG ============
+async function loadActivityLog() {
+  const { data } = await _sb.from('activity_log').select('*').order('created_at', { ascending: false }).limit(50);
+  const container = document.querySelector('#page-activity .card-body');
+  if (!data || !data.length) {
+    container.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px 0">No activity yet.</div>';
+    return;
+  }
+  const colors = ['var(--cyan)','var(--green)','var(--amber)','var(--blue)','var(--purple)'];
+  container.innerHTML = data.map((a,i) => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${colors[i%colors.length]}"></div>
+      <div class="activity-content">
+        <div class="activity-text"><strong>${a.user_email?.split('@')[0]||'Admin'}</strong> — ${a.action}${a.details?' · '+a.details:''}</div>
+        <div class="activity-time">${new Date(a.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</div>
+      </div>
+    </div>`).join('');
+}
+
+async function logActivity(action, details) {
+  await _sb.from('activity_log').insert([{
+    action,
+    details: details||null,
+    user_email: currentUser?.email||null
+  }]);
+  loadActivityLog();
+}
+
+// ============ WEBSITE EDITOR ============
+async function loadWebsiteContent() {
+  const { data } = await _sb.from('website_content').select('*');
+  if (!data) return;
+  data.forEach(row => {
+    const c = row.content;
+    if (row.section === 'contact' && c) {
+      const inputs = document.querySelectorAll('#wp-contact input, #wp-contact textarea');
+      if(c.message) inputs[0] && (inputs[0].value = c.message);
+      if(c.phone) inputs[1] && (inputs[1].value = c.phone);
+      if(c.email) inputs[2] && (inputs[2].value = c.email);
+    }
+    if (row.section === 'about' && c) {
+      const ta = document.querySelector('#wp-about textarea');
+      if (ta && c.body) ta.value = c.body;
+    }
+  });
+}
+
+async function saveWebsiteSection(section) {
+  let content = {};
+  if (section === 'contact') {
+    const inputs = document.querySelectorAll('#wp-contact input, #wp-contact textarea');
+    content = {
+      message: inputs[0]?.value,
+      phone: inputs[1]?.value,
+      email: inputs[2]?.value,
+      serviceArea: inputs[3]?.value,
+      googleUrl: inputs[4]?.value,
+      instagramUrl: inputs[5]?.value,
+      tiktokUrl: inputs[6]?.value
+    };
+  } else if (section === 'about') {
+    const titleInput = document.querySelector('#wp-about input');
+    const bodyTA = document.querySelector('#wp-about textarea');
+    content = { title: titleInput?.value, body: bodyTA?.value };
+  } else if (section === 'home') {
+    const inputs = document.querySelectorAll('#wp-home input, #wp-home textarea');
+    content = { banner: inputs[0]?.value, headline: inputs[1]?.value };
+  }
+  await _sb.from('website_content').upsert({ section, content, updated_at: new Date().toISOString() }, { onConflict: 'section' });
+  await logActivity(`Saved ${section} page content`);
+  alert(`${cap(section)} page saved!`);
+}
 
 // ============ ADDON ROWS ============
 function addAddonRow() {
@@ -896,11 +1303,13 @@ function addBAPair() {
   const list = document.getElementById('ba-pairs-list');
   const pair = document.createElement('div');
   pair.className = 'ba-pair';
-  pair.innerHTML = '<div class="ba-pair-header"><span class="ba-pair-title">Pair '+baPairCount+'</span><button class="btn btn-red btn-sm" onclick="this.closest(\'.ba-pair\').remove()">Remove</button></div><div class="form-group" style="grid-column:1/-1;margin-bottom:8px"><label class="form-label">Title (optional)</label><input class="form-input" placeholder="e.g. Detail Title"></div><div class="ba-upload"><div style="font-size:20px;opacity:0.2">📷</div><div class="ba-upload-label">Before Photo</div></div><div class="ba-upload"><div style="font-size:20px;opacity:0.2">✨</div><div class="ba-upload-label">After Photo</div></div>';
+  pair.innerHTML = `<div class="ba-pair-header"><span class="ba-pair-title">Pair ${baPairCount}</span><button class="btn btn-red btn-sm" onclick="this.closest('.ba-pair').remove()">Remove</button></div><div class="form-group" style="grid-column:1/-1;margin-bottom:8px"><label class="form-label">Title (optional)</label><input class="form-input" placeholder="e.g. Detail Title"></div><div class="ba-upload"><div style="font-size:20px;opacity:0.2">📷</div><div class="ba-upload-label">Before Photo</div></div><div class="ba-upload"><div style="font-size:20px;opacity:0.2">✨</div><div class="ba-upload-label">After Photo</div></div>`;
   list.appendChild(pair);
 }
 
-document.addEventListener('keydown', e => { if(e.key==='Escape') { closeDayModal(); closeCostModal(); closeServiceModal(); } });
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') { closeDayModal(); closeCostModal(); closeServiceModal(); closeOverrideModal(); }
+});
 </script>
 </body>
 </html>
