@@ -299,9 +299,9 @@ select.form-input{cursor:pointer}
         <div class="page-sub" id="dash-date"></div>
       </div>
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-label"><span class="stat-icon">📅</span> Today's Bookings</div><div class="stat-val">4</div></div>
-        <div class="stat-card"><div class="stat-label"><span class="stat-icon">💰</span> Today's Revenue</div><div class="stat-val"><span class="currency">$</span>680</div></div>
-        <div class="stat-card"><div class="stat-label"><span class="stat-icon">⏱️</span> Hours Booked</div><div class="stat-val">6.5<span style="font-size:14px;color:var(--text2);">hrs</span></div></div>
+        <div class="stat-card"><div class="stat-label"><span class="stat-icon">📅</span> Today's Bookings</div><div class="stat-val" id="stat-bookings">0</div></div>
+        <div class="stat-card"><div class="stat-label"><span class="stat-icon">💰</span> Today's Revenue</div><div class="stat-val" id="stat-revenue"><span class="currency">$</span>0</div></div>
+        <div class="stat-card"><div class="stat-label"><span class="stat-icon">⏱️</span> Hours Booked</div><div class="stat-val" id="stat-hours">0<span style="font-size:14px;color:var(--text2);">hrs</span></div></div>
       </div>
       <div class="card">
         <div class="card-head"><span class="card-title">Today's Schedule</span><span class="page-sub" id="dash-today-label"></span></div>
@@ -372,8 +372,8 @@ select.form-input{cursor:pointer}
     <div class="page" id="page-revenue">
       <div class="page-header"><div class="page-title"><span>Revenue</span></div><div class="page-sub">Monthly financial overview</div></div>
       <div class="stats-row" style="grid-template-columns:1fr 1fr;">
-        <div class="stat-card" style="border-left:3px solid var(--cyan)"><div class="stat-label"><span class="stat-icon">💰</span> Total Revenue</div><div class="stat-val"><span class="currency">$</span>12,450</div><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px">March 2026 · 38 bookings</div></div>
-        <div class="stat-card" style="border-left:3px solid var(--green)"><div class="stat-label"><span class="stat-icon">📊</span> Gross Profit</div><div class="stat-val"><span class="currency">$</span>9,725</div><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px">After $2,725 in costs</div></div>
+        <div class="stat-card" style="border-left:3px solid var(--cyan)"><div class="stat-label"><span class="stat-icon">💰</span> Total Revenue</div><div class="stat-val" id="rev-total"><span class="currency">$</span>0</div><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px" id="rev-label">Loading...</div></div>
+        <div class="stat-card" style="border-left:3px solid var(--green)"><div class="stat-label"><span class="stat-icon">📊</span> Gross Profit</div><div class="stat-val" id="rev-profit"><span class="currency">$</span>0</div><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px" id="rev-costs-label">Loading...</div></div>
       </div>
       <div class="card"><div class="card-head"><span class="card-title">Booking Revenue Breakdown</span></div><div class="card-body" style="padding:0;">
         <table class="data-table"><thead><tr><th>Date</th><th>Customer</th><th>Service</th><th>Amount</th></tr></thead><tbody>
@@ -828,8 +828,10 @@ async function loadDashboard() {
   const { data: bookings } = await _sb.from('bookings').select('*').eq('date', today).neq('status','cancelled');
   const count = bookings ? bookings.length : 0;
   const revenue = bookings ? bookings.reduce((s,b) => s + (b.total_price||0), 0) : 0;
-  document.querySelector('.stats-row .stat-card:nth-child(1) .stat-val').textContent = count;
-  document.querySelector('.stats-row .stat-card:nth-child(2) .stat-val').innerHTML = `<span class="currency">$</span>${revenue.toLocaleString()}`;
+  document.getElementById('stat-bookings').textContent = count;
+  document.getElementById('stat-revenue').innerHTML = `<span class="currency">$</span>${revenue.toLocaleString()}`;
+  const hrs = (count * 2).toFixed(1).replace('.0','');
+  document.getElementById('stat-hours').innerHTML = `${hrs}<span style="font-size:14px;color:var(--text2);">hrs</span>`;
 
   const tbody = document.querySelector('#page-dashboard .data-table tbody');
   if (!bookings || !bookings.length) {
@@ -1144,11 +1146,10 @@ async function loadRevenue() {
   const total = (bookings||[]).reduce((s,b)=>s+(b.total_price||0),0);
   const totalCosts = (costs||[]).reduce((s,c)=>s+(c.amount||0),0);
   const profit = total - totalCosts;
-  const statsCards = document.querySelectorAll('#page-revenue .stat-card');
-  statsCards[0].querySelector('.stat-val').innerHTML = `<span class="currency">$</span>${total.toLocaleString()}`;
-  statsCards[0].querySelector('div:last-child').textContent = `${now.toLocaleString('en-US',{month:'long',year:'numeric'})} · ${(bookings||[]).length} bookings`;
-  statsCards[1].querySelector('.stat-val').innerHTML = `<span class="currency">$</span>${Math.max(0,profit).toLocaleString()}`;
-  statsCards[1].querySelector('div:last-child').textContent = `After $${totalCosts.toLocaleString()} in costs`;
+  document.getElementById('rev-total').innerHTML = `<span class="currency">$</span>${total.toLocaleString()}`;
+  document.getElementById('rev-label').textContent = `${now.toLocaleString('en-US',{month:'long',year:'numeric'})} · ${(bookings||[]).length} bookings`;
+  document.getElementById('rev-profit').innerHTML = `<span class="currency">$</span>${Math.max(0,profit).toLocaleString()}`;
+  document.getElementById('rev-costs-label').textContent = `After $${totalCosts.toLocaleString()} in costs`;
   const tbody = document.querySelector('#page-revenue .data-table tbody');
   if (!bookings || !bookings.length) {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:24px">No completed bookings this month</td></tr>';
