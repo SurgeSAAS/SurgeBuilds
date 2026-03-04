@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platinum Detailing — Admin</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAELUlEQVR4nO2Wy28bVRTGf3dmbI+beOzYbl7FDaVNUrWU1iDBgofEI+0GxKI7Fl2wqBCLIKiExCKL/BUs6BYWLKpWQFSpElDSQhMkBAkSKlWTtHZiSGyPHWdm7PHMXBZOUoKapKmQIlDPYqR7NTPnO9/5zgMe2S6bAORuAlB20/kjAP8aACEEQoiH+lbboSeQLc0KVaGlYZC+v/Gd1u0DyXtnDEiJUBQQAukHSN9H+j5GZw/7n3+JaCrdAigfzDnsgAGhaYSNGI2ySbz7MdqePEpgJFC0EOmDB8lfGcMpFQnpUdSYgV+3aa7UtgWyfR9YpV0N6xw7c4aa7ZF+/Q3an87SGUsQ9Vyc4hIrs7dZmJzgj1+nSB19iur0FHcuf4FQ1Y0p2hEDq84VNcSRDz9C9vbS98LLJDvixH6cJH/xAk1ziVR3N+lkmsGBfsonT3Fr5g6LNyZa/wiCh2dAKApSBjzx9jsMjoxCPkc4P0f9u2+59eUlQppGPJkmGY/T29vDjevXUdoNjDdPE391iKtvncZemEcIgZT3d7MpA0IIZBAQ3dtF/7vDhL75GvfCp8zNzFAuldh34HEq1Rp38jmcRp3vJydZri0D0FmY55m+/aCosFWEWwFYQ+zWquQ++Rjt559wS3/S8ANefOU1bNti+pdp/CAgpGl0dnayXFvGMBK89/45Ln/+GXb+LoqiEGyRhvUUrDUTKSVSynvnIKAjkSCWSFCtVGk2XWQQEAqFQUA2m8UwDCzLwjRNenp60HWd8atXKZbLG4L5Z3AbAGxnfX19xGIxDMNgz549BEGA53ksLi6iqiqFQgHTNDfN9aYMCCGklJJMJoNhGBQKBcrlMslkEt/3yWQy2I5DYWEBXdcRQtBoNIhEIti2TTqdxjRNLMuiv7+fer2O53lEo1HC4TCu61KpVPA8D1VVUVUV0zTxV0tTU1UVz/M4e/YsbW1t5HI5xsbGGB4eZqFQoFarUSqW0KM6hw8fJpvNcv78eYaGhhgb+4rR0VEuXrzEyMgIH5w7x8rKCm6jgVmpUC6VcJw6J08OcfPmTfL5PJlMhmvXrjE+Po6iKPcYGBwcZHZ2loGBAXRdp+k2aTgOxeISDcehI5VCC0dIp1LcvvU7x46fYHpqimRHkmbTZS6fI3v8BLZl4XsekajO3MwsejjEgUOHcH2farVKIpFA13UmJiZaOttMA6F4B/uefQ7FbyIiYdzlGvZSkWg6Rbyri9+uXKHnyBFkNEqkvR23UEAz4i2RCUHgNQmrGtG9e5m78QNW7u59NbBehoqirKsfQPU87MI8iioQqoZn2Ui3gaw7VAoLpLq7aFQqaM0mjmVRLxWJWBaira0Vkh/Q9D2aTp1QIFGUjXNvrTR3fSfcchasLxl/2wPW5/2259XHWhvepDx3nYH/x074nwbwyHbd/gJEU+aZg9wbqwAAAABJRU5ErkJggg==">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0D10; --surface: #0F1318; --surface2: #151A21; --surface3: #1A2029;
+  --border: rgba(0,220,220,0.08); --border-h: rgba(0,220,220,0.18);
+  --cyan: #00DCC8; --cyan2: #00B8A9; --cyan-dim: rgba(0,220,200,0.08); --cyan-glow: rgba(0,220,200,0.15);
+  --text: #E0E6ED; --text2: #7A8899; --text3: #3E4A58;
+  --red: #FF5C5C; --red-dim: rgba(255,92,92,0.1);
+  --green: #34D399; --green-dim: rgba(52,211,153,0.1);
+  --amber: #FBBF24; --amber-dim: rgba(251,191,36,0.1);
+  --blue: #60A5FA; --blue-dim: rgba(96,165,250,0.1);
+  --purple: #A78BFA; --purple-dim: rgba(167,139,250,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Chakra Petch',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+input,button,select,textarea{font-family:inherit}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-bg-grid{position:absolute;inset:0;opacity:0.03;background-image:repeating-linear-gradient(0deg,transparent,transparent 59px,var(--cyan) 59px,var(--cyan) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,var(--cyan) 59px,var(--cyan) 60px)}
+.login-box{position:relative;z-index:2;width:340px;text-align:center;animation:fadeUp .5s ease both}
+.login-logo{width:120px;height:auto;margin-bottom:16px;border-radius:8px}
+.login-title{font-size:14px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.login-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:32px}
+.login-field{width:100%;background:var(--surface2);border:1px solid var(--border);padding:12px 16px;color:var(--text);font-size:13px;outline:none;margin-bottom:12px;border-radius:4px;transition:border-color .2s}
+.login-field::placeholder{color:var(--text3)}
+.login-field:focus{border-color:var(--cyan)}
+.login-btn{width:100%;padding:13px;background:var(--cyan);color:#0A0D10;border:none;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:all .2s;margin-top:4px}
+.login-btn:hover{background:var(--cyan2)}
+.login-error{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--red);margin-top:12px;min-height:16px}
+
+/* APP */
+#app{display:none;height:100vh}
+#app.active{display:grid;grid-template-columns:220px 1fr}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-logo{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.sidebar-logo img{width:40px;height:40px;border-radius:6px}
+.sidebar-logo-text{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);line-height:1.3}
+.sidebar-logo-sub{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+.sidebar-nav{flex:1;padding:12px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;cursor:pointer;transition:all .12s;border:1px solid transparent;font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.03em}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--cyan-dim);border-color:rgba(0,220,200,0.12);color:var(--cyan)}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-spacer{flex:1}
+.sidebar-user{padding:14px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--cyan-dim);border:1.5px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan)}
+.user-name{font-size:11px;font-weight:600}
+.user-role{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase}
+.logout-btn{margin-left:auto;background:none;border:1px solid var(--border);color:var(--text3);width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* MAIN */
+.main{overflow-y:auto;background:var(--bg)}
+.page{display:none;padding:28px;min-height:100vh;animation:fadeUp .3s ease both}
+.page.active{display:block}
+.page-header{margin-bottom:24px}
+.page-title{font-size:22px;font-weight:700;letter-spacing:.03em;margin-bottom:4px}
+.page-title span{color:var(--cyan)}
+.page-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .15s}
+.card:hover{border-color:var(--border-h)}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.card-body{padding:16px 18px}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.stat-icon{color:var(--cyan);font-size:12px}
+.stat-val{font-size:26px;font-weight:700;letter-spacing:-.02em}
+.stat-val .currency{color:var(--cyan)}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)}
+.data-table td{font-size:12px;padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
+.data-table tr:hover td{background:var(--surface2);color:var(--text)}
+.data-table .mono{font-family:'Share Tech Mono',monospace;font-size:11px}
+
+/* BUTTONS */
+.btn{padding:8px 18px;border:none;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.btn-cyan{background:var(--cyan);color:#0A0D10}
+.btn-cyan:hover{background:var(--cyan2)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-outline:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,92,92,0.2)}
+.btn-red:hover{background:rgba(255,92,92,0.2)}
+.btn-sm{padding:5px 12px;font-size:9px}
+
+/* FORMS */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase}
+.form-input{background:var(--surface2);border:1px solid var(--border);padding:9px 12px;color:var(--text);font-size:12px;outline:none;border-radius:4px;transition:border-color .2s}
+.form-input:focus{border-color:var(--cyan)}
+.form-input::placeholder{color:var(--text3)}
+select.form-input{cursor:pointer}
+
+/* TAGS */
+.tag{font-family:'Share Tech Mono',monospace;font-size:8px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase;display:inline-block}
+.tag-cyan{background:var(--cyan-dim);color:var(--cyan)}
+.tag-green{background:var(--green-dim);color:var(--green)}
+.tag-amber{background:var(--amber-dim);color:var(--amber)}
+.tag-red{background:var(--red-dim);color:var(--red)}
+.tag-blue{background:var(--blue-dim);color:var(--blue)}
+.tag-purple{background:var(--purple-dim);color:var(--purple)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,13,16,0.85);backdrop-filter:blur(4px);z-index:900;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:8px;width:560px;max-width:95vw;max-height:85vh;overflow-y:auto;animation:fadeUp .25s ease both}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:14px;font-weight:700}
+.modal-close{background:none;border:1px solid var(--border);color:var(--text3);width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+.modal-body{padding:20px 22px}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+/* CALENDAR */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cal-month{font-size:16px;font-weight:700}
+.cal-arrows{display:flex;gap:6px}
+.cal-arrow{background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:30px;height:30px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
+.cal-arrow:hover{border-color:var(--cyan);color:var(--cyan)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);text-align:center;padding:6px 0;letter-spacing:.1em;text-transform:uppercase}
+.cal-cell{aspect-ratio:1/1;background:var(--surface);border:1px solid var(--border);border-radius:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:6px 4px;transition:all .12s;position:relative;min-height:70px}
+.cal-cell:hover{border-color:var(--cyan)}
+.cal-cell.today{border-color:var(--cyan);box-shadow:0 0 12px var(--cyan-glow)}
+.cal-cell.empty{background:transparent;border-color:transparent;cursor:default}
+.cal-cell.empty:hover{border-color:transparent}
+.cal-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);margin-bottom:4px}
+.cal-cell.today .cal-num{color:var(--cyan);font-weight:700}
+.cal-dots{display:flex;gap:2px;flex-wrap:wrap;justify-content:center}
+.cal-dot{width:5px;height:5px;border-radius:50%}
+.cal-booking-count{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);margin-top:2px}
+
+/* SCHEDULE */
+.schedule-day{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.schedule-day:last-child{border-bottom:none}
+.schedule-day-name{font-size:13px;font-weight:600;width:100px}
+.schedule-toggle{width:36px;height:20px;border-radius:10px;background:var(--surface3);border:1px solid var(--border);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.schedule-toggle.on{background:var(--cyan-dim);border-color:var(--cyan)}
+.schedule-toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:var(--text3);top:2px;left:2px;transition:all .2s}
+.schedule-toggle.on::after{background:var(--cyan);left:18px}
+.schedule-times{display:flex;align-items:center;gap:8px}
+.schedule-times input{width:100px}
+.schedule-dash{color:var(--text3);font-size:12px}
+
+/* ACTIVITY */
+.activity-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.activity-content{flex:1}
+.activity-text{font-size:12px;color:var(--text2);line-height:1.5}
+.activity-text strong{color:var(--text)}
+.activity-text .action{color:var(--cyan)}
+.activity-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px}
+
+/* PLACEHOLDER */
+.placeholder-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;text-align:center}
+.placeholder-icon{font-size:48px;margin-bottom:16px;opacity:0.3}
+.placeholder-title{font-size:16px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.placeholder-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em}
+
+.recurring-badge{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--cyan);background:var(--cyan-dim);padding:1px 6px;border-radius:3px}
+.override-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;margin-bottom:6px}
+.override-date{font-family:'Share Tech Mono',monospace;font-size:11px}
+.override-detail{font-size:11px;color:var(--text2)}
+
+/* WEBSITE EDITOR TABS */
+.web-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0}
+.web-tab{padding:10px 18px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;margin-bottom:-1px}
+.web-tab:hover{color:var(--text2)}
+.web-tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.web-panel{display:none}
+.web-panel.active{display:block}
+
+/* WEBSITE EDITOR SPECIFIC */
+.editor-section{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:16px}
+.editor-section-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.editor-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.upload-zone{border:2px dashed var(--border);border-radius:6px;padding:30px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2)}
+.upload-zone:hover{border-color:var(--cyan);background:var(--cyan-dim)}
+.upload-zone-icon{font-size:28px;opacity:0.3;margin-bottom:6px}
+.upload-zone-text{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.1em}
+.upload-zone-sub{font-size:10px;color:var(--text3);margin-top:4px}
+.photo-grid-editor{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.photo-thumb{aspect-ratio:1/1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.photo-thumb .thumb-icon{font-size:20px;opacity:0.15}
+.photo-thumb-actions{position:absolute;top:4px;right:4px;display:flex;gap:3px}
+.photo-thumb-btn{width:20px;height:20px;border-radius:3px;border:none;cursor:pointer;font-size:9px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.photo-thumb-btn.star{background:var(--amber-dim);color:var(--amber)}
+.photo-thumb-btn.star.active{background:var(--amber);color:#0A0D10}
+.photo-thumb-btn.del{background:var(--red-dim);color:var(--red)}
+.photo-thumb-btn.del:hover{background:var(--red);color:#fff}
+.photo-thumb-featured{position:absolute;bottom:4px;left:4px;font-family:'Share Tech Mono',monospace;font-size:7px;background:var(--amber);color:#0A0D10;padding:1px 5px;border-radius:2px;letter-spacing:.05em}
+
+/* BA PAIR */
+.ba-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px}
+.ba-pair-header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.ba-pair-title{font-size:12px;font-weight:600}
+.ba-upload{aspect-ratio:4/3;border:2px dashed var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;cursor:pointer;transition:all .15s}
+.ba-upload:hover{border-color:var(--cyan);background:var(--cyan-dim)}
+.ba-upload-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:.1em}
+
+/* REVIEW EDITOR */
+.review-editor-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:10px}
+.review-editor-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.review-editor-stars{color:var(--amber);font-size:13px;letter-spacing:1px}
+.review-toggle{width:32px;height:18px;border-radius:9px;background:var(--surface3);border:1px solid var(--border);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.review-toggle.on{background:var(--green-dim);border-color:var(--green)}
+.review-toggle::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:var(--text3);top:2px;left:2px;transition:all .2s}
+.review-toggle.on::after{background:var(--green);left:16px}
+
+/* ADDON EDITOR */
+.addon-editor-row{display:grid;grid-template-columns:1fr 1fr auto auto;gap:8px;align-items:end;margin-bottom:8px}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:10px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:800px){
+  #app.active{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .stats-row{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .photo-grid-editor{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-bg-grid"></div>
+  <div class="login-box">
+    <img src="data:image/png;base64,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" class="login-logo" alt="Platinum Detailing">
+    <div class="login-title">Platinum Detailing</div>
+    <div class="login-sub">Admin Portal</div>
+    <input type="email" class="login-field" id="login-email" placeholder="Email" autocomplete="off">
+    <input type="password" class="login-field" id="login-pass" placeholder="Password">
+    <button class="login-btn" id="login-btn-el" onclick="attemptLogin()">Sign In</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <img src="data:image/png;base64,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" alt="Logo">
+      <div>
+        <div class="sidebar-logo-text">Platinum<br>Detailing</div>
+        <div class="sidebar-logo-sub">Admin Panel</div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="icon">📊</span> Dashboard</div>
+      <div class="nav-item" onclick="showPage('calendar',this)"><span class="icon">📅</span> Calendar</div>
+      <div class="nav-item" onclick="showPage('services',this)"><span class="icon">🔧</span> Services</div>
+      <div class="nav-item" onclick="showPage('schedule',this)"><span class="icon">🕐</span> Schedule</div>
+      <div class="nav-item" onclick="showPage('revenue',this)"><span class="icon">📈</span> Revenue</div>
+      <div class="nav-item" onclick="showPage('costs',this)"><span class="icon">💳</span> Costs</div>
+      <div class="nav-item" onclick="showPage('website',this)"><span class="icon">🌐</span> Website</div>
+      <div class="nav-item" onclick="showPage('messaging',this)"><span class="icon">💬</span> Messaging</div>
+      <div class="nav-item" onclick="showPage('activity',this)"><span class="icon">📋</span> Activity Log</div>
+      <div class="nav-spacer"></div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">T</div>
+      <div>
+        <div class="user-name" id="user-display-name">Test User</div>
+        <div class="user-role">Manager</div>
+      </div>
+      <button class="logout-btn" onclick="logout()" title="Sign out">✕</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Good morning, <span id="dash-name">Test</span></div>
+        <div class="page-sub" id="dash-date"></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label"><span class="stat-icon">📅</span> Today's Bookings</div><div class="stat-val">4</div></div>
+        <div class="stat-card"><div class="stat-label"><span class="stat-icon">💰</span> Today's Revenue</div><div class="stat-val"><span class="currency">$</span>680</div></div>
+        <div class="stat-card"><div class="stat-label"><span class="stat-icon">⏱️</span> Hours Booked</div><div class="stat-val">6.5<span style="font-size:14px;color:var(--text2);">hrs</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">Today's Schedule</span><span class="page-sub" id="dash-today-label"></span></div>
+        <div class="card-body" style="padding:0;">
+          <table class="data-table">
+            <thead><tr><th>Time</th><th>Customer</th><th>Service</th><th>Phone</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">8:00 AM</td><td>Marcus Rivera</td><td>Full Detail</td><td class="mono">(617) 555-0134</td><td><span class="tag tag-green">Confirmed</span></td></tr>
+              <tr><td class="mono">10:30 AM</td><td>Sarah Chen</td><td>Interior Clean</td><td class="mono">(617) 555-0291</td><td><span class="tag tag-green">Confirmed</span></td></tr>
+              <tr><td class="mono">1:00 PM</td><td>Jake Thompson</td><td>Paint Correction</td><td class="mono">(508) 555-0177</td><td><span class="tag tag-amber">Pending</span></td></tr>
+              <tr><td class="mono">3:30 PM</td><td>Emily Dawson</td><td>Exterior Wash + Wax</td><td class="mono">(781) 555-0423</td><td><span class="tag tag-green">Confirmed</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="page" id="page-calendar">
+      <div class="page-header"><div class="page-title"><span>Calendar</span></div><div class="page-sub">Booking management</div></div>
+      <div class="card"><div class="card-body">
+        <div class="cal-header"><div class="cal-month" id="cal-month-label">March 2026</div><div class="cal-arrows"><button class="cal-arrow" onclick="calPrev()">‹</button><button class="cal-arrow" onclick="calNext()">›</button></div></div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div></div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="page" id="page-services">
+      <div class="page-header"><div class="page-title"><span>Services</span></div><div class="page-sub">Manage services, pricing & add-ons</div></div>
+      <div style="margin-bottom:14px;"><button class="btn btn-cyan" onclick="openAddService()">+ Add Service</button></div>
+      <div class="card"><div class="card-body" style="padding:0;">
+        <table class="data-table" id="services-table">
+          <thead><tr><th>Service</th><th>Price</th><th>Duration</th><th>Add-Ons</th><th>Visible</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;color:var(--text)">Full Detail</td><td class="mono"><span style="text-decoration:line-through;color:var(--text3)">$250</span> $189</td><td class="mono">150 min</td><td class="mono">3</td><td><span class="tag tag-green">Live</span></td><td><button class="btn btn-outline btn-sm" style="margin-right:4px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+            <tr><td style="font-weight:600;color:var(--text)">Interior Clean</td><td class="mono">$149</td><td class="mono">120 min</td><td class="mono">2</td><td><span class="tag tag-green">Live</span></td><td><button class="btn btn-outline btn-sm" style="margin-right:4px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+            <tr><td style="font-weight:600;color:var(--text)">Exterior Only</td><td class="mono">$89</td><td class="mono">90 min</td><td class="mono">2</td><td><span class="tag tag-green">Live</span></td><td><button class="btn btn-outline btn-sm" style="margin-right:4px">Edit</button><button class="btn btn-red btn-sm">Delete</button></td></tr>
+          </tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="page" id="page-schedule">
+      <div class="page-header"><div class="page-title"><span>Schedule</span></div><div class="page-sub">Set weekly availability & overrides</div></div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-head"><span class="card-title">Default Weekly Hours</span></div>
+        <div class="card-body">
+          <div class="schedule-day"><span class="schedule-day-name">Monday</span><div class="schedule-toggle on" onclick="this.classList.toggle('on')"></div><div class="schedule-times"><input type="time" class="form-input" value="08:00"><span class="schedule-dash">—</span><input type="time" class="form-input" value="17:00"></div></div>
+          <div class="schedule-day"><span class="schedule-day-name">Tuesday</span><div class="schedule-toggle on" onclick="this.classList.toggle('on')"></div><div class="schedule-times"><input type="time" class="form-input" value="08:00"><span class="schedule-dash">—</span><input type="time" class="form-input" value="17:00"></div></div>
+          <div class="schedule-day"><span class="schedule-day-name">Wednesday</span><div class="schedule-toggle on" onclick="this.classList.toggle('on')"></div><div class="schedule-times"><input type="time" class="form-input" value="08:00"><span class="schedule-dash">—</span><input type="time" class="form-input" value="17:00"></div></div>
+          <div class="schedule-day"><span class="schedule-day-name">Thursday</span><div class="schedule-toggle on" onclick="this.classList.toggle('on')"></div><div class="schedule-times"><input type="time" class="form-input" value="08:00"><span class="schedule-dash">—</span><input type="time" class="form-input" value="17:00"></div></div>
+          <div class="schedule-day"><span class="schedule-day-name">Friday</span><div class="schedule-toggle on" onclick="this.classList.toggle('on')"></div><div class="schedule-times"><input type="time" class="form-input" value="08:00"><span class="schedule-dash">—</span><input type="time" class="form-input" value="16:00"></div></div>
+          <div class="schedule-day"><span class="schedule-day-name">Saturday</span><div class="schedule-toggle on" onclick="this.classList.toggle('on')"></div><div class="schedule-times"><input type="time" class="form-input" value="09:00"><span class="schedule-dash">—</span><input type="time" class="form-input" value="14:00"></div></div>
+          <div class="schedule-day"><span class="schedule-day-name">Sunday</span><div class="schedule-toggle" onclick="this.classList.toggle('on')"></div><div class="schedule-times"><input type="time" class="form-input" value="00:00" disabled><span class="schedule-dash">—</span><input type="time" class="form-input" value="00:00" disabled></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">Date Overrides</span><button class="btn btn-cyan btn-sm" onclick="openOverrideModal()">+ Add Override</button></div>
+        <div class="card-body">
+          <div class="override-item"><span class="override-date">Mar 17, 2026</span><span class="override-detail">Blocked — Day off</span><button class="btn btn-red btn-sm">Remove</button></div>
+          <div class="override-item"><span class="override-date">Mar 28, 2026</span><span class="override-detail">Extended — 8:00 AM to 8:00 PM</span><button class="btn btn-red btn-sm">Remove</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div class="page" id="page-revenue">
+      <div class="page-header"><div class="page-title"><span>Revenue</span></div><div class="page-sub">Monthly financial overview</div></div>
+      <div class="stats-row" style="grid-template-columns:1fr 1fr;">
+        <div class="stat-card" style="border-left:3px solid var(--cyan)"><div class="stat-label"><span class="stat-icon">💰</span> Total Revenue</div><div class="stat-val"><span class="currency">$</span>12,450</div><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px">March 2026 · 38 bookings</div></div>
+        <div class="stat-card" style="border-left:3px solid var(--green)"><div class="stat-label"><span class="stat-icon">📊</span> Gross Profit</div><div class="stat-val"><span class="currency">$</span>9,725</div><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px">After $2,725 in costs</div></div>
+      </div>
+      <div class="card"><div class="card-head"><span class="card-title">Booking Revenue Breakdown</span></div><div class="card-body" style="padding:0;">
+        <table class="data-table"><thead><tr><th>Date</th><th>Customer</th><th>Service</th><th>Amount</th></tr></thead><tbody>
+          <tr><td class="mono">Mar 4</td><td>Marcus Rivera</td><td>Full Detail</td><td class="mono" style="color:var(--green)">+$250</td></tr>
+          <tr><td class="mono">Mar 4</td><td>Sarah Chen</td><td>Interior Clean</td><td class="mono" style="color:var(--green)">+$120</td></tr>
+          <tr><td class="mono">Mar 4</td><td>Jake Thompson</td><td>Paint Correction</td><td class="mono" style="color:var(--green)">+$350</td></tr>
+          <tr><td class="mono">Mar 3</td><td>Emily Dawson</td><td>Exterior Wash + Wax</td><td class="mono" style="color:var(--green)">+$80</td></tr>
+          <tr><td class="mono">Mar 3</td><td>Kevin Brooks</td><td>Ceramic Coating</td><td class="mono" style="color:var(--green)">+$500</td></tr>
+        </tbody></table>
+      </div></div>
+    </div>
+
+    <!-- COSTS -->
+    <div class="page" id="page-costs">
+      <div class="page-header"><div class="page-title"><span>Costs</span></div><div class="page-sub">Track business expenses</div></div>
+      <div style="margin-bottom:14px"><button class="btn btn-cyan" onclick="openAddCost()">+ Add Cost</button></div>
+      <div class="card"><div class="card-body" style="padding:0;">
+        <table class="data-table"><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Spent By</th><th>Recurring</th><th>Actions</th></tr></thead><tbody>
+          <tr><td class="mono">Mar 1</td><td>Ceramic coating supply</td><td class="mono" style="color:var(--red)">-$185</td><td>Marcus</td><td>—</td><td><button class="btn btn-red btn-sm">Delete</button></td></tr>
+          <tr><td class="mono">Mar 1</td><td>Microfiber towels (bulk)</td><td class="mono" style="color:var(--red)">-$65</td><td>Marcus</td><td>—</td><td><button class="btn btn-red btn-sm">Delete</button></td></tr>
+          <tr><td class="mono">Mar 1</td><td>Insurance</td><td class="mono" style="color:var(--red)">-$320</td><td>Jake</td><td><span class="recurring-badge">Monthly</span></td><td><button class="btn btn-red btn-sm">Delete</button></td></tr>
+          <tr><td class="mono">Mar 2</td><td>Gas</td><td class="mono" style="color:var(--red)">-$55</td><td>Marcus</td><td>—</td><td><button class="btn btn-red btn-sm">Delete</button></td></tr>
+        </tbody></table>
+      </div></div>
+    </div>
+
+    <!-- WEBSITE EDITOR -->
+    <div class="page" id="page-website">
+      <div class="page-header"><div class="page-title"><span>Website</span> Editor</div><div class="page-sub">Manage customer-facing site content</div></div>
+      <div class="web-tabs">
+        <div class="web-tab active" onclick="showWebTab('home',this)">Home</div>
+        <div class="web-tab" onclick="showWebTab('ws-services',this)">Services</div>
+        <div class="web-tab" onclick="showWebTab('about',this)">About</div>
+        <div class="web-tab" onclick="showWebTab('gallery',this)">Gallery</div>
+        <div class="web-tab" onclick="showWebTab('contact',this)">Contact</div>
+      </div>
+
+      <!-- HOME TAB -->
+      <div class="web-panel active" id="wp-home">
+        <div class="editor-section">
+          <div class="editor-section-title">Announcement Bar</div>
+          <div class="form-group"><label class="form-label">Banner Text</label><input class="form-input" value="We Serve All of Massachusetts — Mobile Detailing at Your Doorstep"></div>
+        </div>
+
+        <div class="editor-section">
+          <div class="editor-section-title">Hero Section</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Headline</label><input class="form-input" value="Your Car, Our Passion"></div>
+            <div class="form-group"><label class="form-label">Accent Word (colored)</label><input class="form-input" value="Passion"></div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px"><label class="form-label">Subtitle</label><textarea class="form-input" rows="2">Book in seconds. Pick a time. We deliver the shine — at your home, workplace, or anywhere in Massachusetts.</textarea></div>
+          <div class="form-group"><label class="form-label">Hero Background Image / Video</label>
+            <div class="upload-zone">
+              <div class="upload-zone-icon">📷</div>
+              <div class="upload-zone-text">Click to upload hero image or video</div>
+              <div class="upload-zone-sub">Supports JPG, PNG, MP4, MOV · Max 50MB</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="editor-section">
+          <div class="editor-section-title">Trust Strip</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Item 1 Label</label><input class="form-input" value="Fully Mobile"></div>
+            <div class="form-group"><label class="form-label">Item 1 Value</label><input class="form-input" value="We Come to You"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Item 2 Label</label><input class="form-input" value="Google Rating"></div>
+            <div class="form-group"><label class="form-label">Item 2 Value</label><input class="form-input" value="5.0 Stars"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Item 3 Label</label><input class="form-input" value="Service Area"></div>
+            <div class="form-group"><label class="form-label">Item 3 Value</label><input class="form-input" value="All of Massachusetts"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Item 4 Label</label><input class="form-input" value="Payment"></div>
+            <div class="form-group"><label class="form-label">Item 4 Value</label><input class="form-input" value="Pay After Service"></div>
+          </div>
+        </div>
+
+        <div class="editor-section">
+          <div class="editor-section-title">Before & After Showcases</div>
+          <div id="ba-pairs-list">
+            <div class="ba-pair">
+              <div class="ba-pair-header"><span class="ba-pair-title">Pair 1</span><button class="btn btn-red btn-sm">Remove</button></div>
+              <div class="form-group" style="grid-column:1/-1;margin-bottom:8px"><label class="form-label">Title (optional)</label><input class="form-input" placeholder="e.g. Tundra Revival"></div>
+              <div class="ba-upload"><div style="font-size:20px;opacity:0.2">📷</div><div class="ba-upload-label">Before Photo</div></div>
+              <div class="ba-upload"><div style="font-size:20px;opacity:0.2">✨</div><div class="ba-upload-label">After Photo</div></div>
+            </div>
+            <div class="ba-pair">
+              <div class="ba-pair-header"><span class="ba-pair-title">Pair 2</span><button class="btn btn-red btn-sm">Remove</button></div>
+              <div class="form-group" style="grid-column:1/-1;margin-bottom:8px"><label class="form-label">Title (optional)</label><input class="form-input" placeholder="e.g. Silverado Revival"></div>
+              <div class="ba-upload"><div style="font-size:20px;opacity:0.2">📷</div><div class="ba-upload-label">Before Photo</div></div>
+              <div class="ba-upload"><div style="font-size:20px;opacity:0.2">✨</div><div class="ba-upload-label">After Photo</div></div>
+            </div>
+          </div>
+          <button class="btn btn-outline" style="margin-top:8px" onclick="addBAPair()">+ Add Before/After Pair</button>
+        </div>
+
+        <div class="editor-section">
+          <div class="editor-section-title">Reviews Displayed on Homepage</div>
+          <div id="reviews-editor-list">
+            <div class="review-editor-card">
+              <div class="review-editor-top">
+                <div>
+                  <div class="review-editor-stars">★★★★★</div>
+                  <div style="font-size:12px;font-weight:600;margin-top:4px">Mike Warren</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--green);letter-spacing:.08em">VISIBLE</span>
+                  <div class="review-toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text2);font-style:italic;line-height:1.5">"Better than when I bought it" — I have a 2016 white Jeep Wrangler...</div>
+              <div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-red btn-sm">Delete</button></div>
+            </div>
+            <div class="review-editor-card">
+              <div class="review-editor-top">
+                <div>
+                  <div class="review-editor-stars">★★★★★</div>
+                  <div style="font-size:12px;font-weight:600;margin-top:4px">Beatrice Anacassis</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--green);letter-spacing:.08em">VISIBLE</span>
+                  <div class="review-toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text2);font-style:italic;line-height:1.5">"They came, they saw, they conquered!" — My car was covered in seagull droppings...</div>
+              <div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-red btn-sm">Delete</button></div>
+            </div>
+            <div class="review-editor-card">
+              <div class="review-editor-top">
+                <div>
+                  <div class="review-editor-stars">★★★★★</div>
+                  <div style="font-size:12px;font-weight:600;margin-top:4px">Gretchen Hergruter</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--green);letter-spacing:.08em">VISIBLE</span>
+                  <div class="review-toggle on" onclick="this.classList.toggle('on')"></div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text2);font-style:italic;line-height:1.5">"Spotless. 10/10." — Professional, clean, and easy to work with.</div>
+              <div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-red btn-sm">Delete</button></div>
+            </div>
+          </div>
+          <button class="btn btn-outline" style="margin-top:8px">+ Add Review</button>
+        </div>
+
+        <div style="margin-top:16px"><button class="btn btn-cyan">Save Home Page Changes</button></div>
+      </div>
+
+      <!-- SERVICES TAB -->
+      <div class="web-panel" id="wp-ws-services">
+        <div class="editor-section">
+          <div class="editor-section-title">Services Page Header</div>
+          <div class="form-group" style="margin-bottom:12px"><label class="form-label">Page Title</label><input class="form-input" value="Our Services"></div>
+          <div class="form-group"><label class="form-label">Subtitle</label><textarea class="form-input" rows="2">Select the package that fits your needs — all fully mobile with flat-rate pricing and no hidden fees.</textarea></div>
+        </div>
+        <div class="editor-section">
+          <div class="editor-section-title">Service Visibility on Customer Site</div>
+          <p style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.5">Services marked as "Live" in the Services page will appear on your customer-facing website. Toggle visibility from the Services page or when editing a service.</p>
+          <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--text2)">
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-weight:600;color:var(--text)">Full Detail</span><span class="tag tag-green">Live</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-weight:600;color:var(--text)">Interior Clean</span><span class="tag tag-green">Live</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="font-weight:600;color:var(--text)">Exterior Only</span><span class="tag tag-green">Live</span></div>
+          </div>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-cyan">Save Services Page</button></div>
+      </div>
+
+      <!-- ABOUT TAB -->
+      <div class="web-panel" id="wp-about">
+        <div class="editor-section">
+          <div class="editor-section-title">About Page Content</div>
+          <div class="form-group" style="margin-bottom:12px"><label class="form-label">Page Title</label><input class="form-input" value="About Us"></div>
+          <div class="form-group" style="margin-bottom:12px"><label class="form-label">Body Text (supports paragraphs — use blank lines to separate)</label>
+            <textarea class="form-input" rows="10" style="line-height:1.6">Founded nearly two years ago by two young entrepreneurs, Dalton and Alex, Platinum Detailing has grown from a passionate side hustle into one of Massachusetts' most trusted mobile detailing services. Now at just 18 years old, we've detailed dozens and dozens of vehicles, from daily drivers to luxury showpieces — each one treated with unmatched care, precision, and professionalism.
+
+Our mission is simple: Deliver showroom-quality results with the convenience of coming straight to your doorstep. Whether it's a full interior transformation or a complete exterior refresh, our detail packages are designed to elevate your ride and restore that "like-new" feeling.
+
+We're fully mobile and self-contained — with our own water and power supply, we can detail your car anywhere: home, work, or even your job site. Busy day? No problem. We just need your car and a spot to park — we'll handle the rest.
+
+We're proud to be backed by a 5-star Google rating, and even prouder to serve the community that believed in us from the start.
+
+Your car, our passion — experience the Platinum difference.</textarea>
+          </div>
+        </div>
+        <div class="editor-section">
+          <div class="editor-section-title">Video</div>
+          <div class="upload-zone">
+            <div class="upload-zone-icon">🎬</div>
+            <div class="upload-zone-text">Click to upload video</div>
+            <div class="upload-zone-sub">Supports MP4, MOV, WebM · Max 100MB</div>
+          </div>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-cyan">Save About Page</button></div>
+      </div>
+
+      <!-- GALLERY TAB -->
+      <div class="web-panel" id="wp-gallery">
+        <div class="editor-section">
+          <div class="editor-section-title">Gallery Page Settings</div>
+          <div class="form-group" style="margin-bottom:12px"><label class="form-label">Page Title</label><input class="form-input" value="Gallery"></div>
+          <div class="form-group"><label class="form-label">Subtitle</label><input class="form-input" value="Every detail tells a story. Browse our recent work — from daily drivers to luxury showpieces."></div>
+        </div>
+        <div class="editor-section">
+          <div class="editor-section-title">Featured Photos (Top 3 — click ★ to feature)</div>
+          <p style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.5">Photos marked with ★ will appear as large featured cards at the top of the gallery. You can feature up to 3 photos. Add a caption/title for each featured photo.</p>
+          <div id="featured-captions">
+            <div class="form-row" style="margin-bottom:8px">
+              <div class="form-group"><label class="form-label">Featured 1 — Title</label><input class="form-input" placeholder="e.g. Bentley Continental"></div>
+              <div class="form-group"><label class="form-label">Featured 1 — Subtitle</label><input class="form-input" placeholder="e.g. Full Detail · Platinum Package"></div>
+            </div>
+            <div class="form-row" style="margin-bottom:8px">
+              <div class="form-group"><label class="form-label">Featured 2 — Title</label><input class="form-input" placeholder="e.g. Toyota Tundra Revival"></div>
+              <div class="form-group"><label class="form-label">Featured 2 — Subtitle</label><input class="form-input" placeholder="e.g. Interior Deep Clean"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Featured 3 — Title</label><input class="form-input" placeholder="e.g. Chevy Silverado"></div>
+              <div class="form-group"><label class="form-label">Featured 3 — Subtitle</label><input class="form-input" placeholder="e.g. Full Detail"></div>
+            </div>
+          </div>
+        </div>
+        <div class="editor-section">
+          <div class="editor-section-title">Upload Photos</div>
+          <div class="upload-zone" style="margin-bottom:14px">
+            <div class="upload-zone-icon">📷</div>
+            <div class="upload-zone-text">Click or drag to upload photos</div>
+            <div class="upload-zone-sub">JPG, PNG · Multiple files supported</div>
+          </div>
+          <div class="photo-grid-editor">
+            <div class="photo-thumb"><div class="thumb-icon">📷</div><div class="photo-thumb-actions"><button class="photo-thumb-btn star active" title="Featured">★</button><button class="photo-thumb-btn del" title="Delete">✕</button></div><div class="photo-thumb-featured">Featured</div></div>
+            <div class="photo-thumb"><div class="thumb-icon">📷</div><div class="photo-thumb-actions"><button class="photo-thumb-btn star active" title="Featured">★</button><button class="photo-thumb-btn del" title="Delete">✕</button></div><div class="photo-thumb-featured">Featured</div></div>
+            <div class="photo-thumb"><div class="thumb-icon">📷</div><div class="photo-thumb-actions"><button class="photo-thumb-btn star active" title="Featured">★</button><button class="photo-thumb-btn del" title="Delete">✕</button></div><div class="photo-thumb-featured">Featured</div></div>
+            <div class="photo-thumb"><div class="thumb-icon">📷</div><div class="photo-thumb-actions"><button class="photo-thumb-btn star" title="Featured">★</button><button class="photo-thumb-btn del" title="Delete">✕</button></div></div>
+            <div class="photo-thumb"><div class="thumb-icon">📷</div><div class="photo-thumb-actions"><button class="photo-thumb-btn star" title="Featured">★</button><button class="photo-thumb-btn del" title="Delete">✕</button></div></div>
+            <div class="photo-thumb"><div class="thumb-icon">📷</div><div class="photo-thumb-actions"><button class="photo-thumb-btn star" title="Featured">★</button><button class="photo-thumb-btn del" title="Delete">✕</button></div></div>
+            <div class="photo-thumb"><div class="thumb-icon">📷</div><div class="photo-thumb-actions"><button class="photo-thumb-btn star" title="Featured">★</button><button class="photo-thumb-btn del" title="Delete">✕</button></div></div>
+            <div class="photo-thumb"><div class="thumb-icon">📷</div><div class="photo-thumb-actions"><button class="photo-thumb-btn star" title="Featured">★</button><button class="photo-thumb-btn del" title="Delete">✕</button></div></div>
+          </div>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-cyan">Save Gallery Page</button></div>
+      </div>
+
+      <!-- CONTACT TAB -->
+      <div class="web-panel" id="wp-contact">
+        <div class="editor-section">
+          <div class="editor-section-title">Contact Page Content</div>
+          <div class="form-group" style="margin-bottom:12px"><label class="form-label">Main Message (displayed prominently on page)</label>
+            <textarea class="form-input" rows="3">Any questions or concerns feel free to reach out via text/call at 617-676-5627 or email at platinumdetails2024@gmail.com</textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" value="617-676-5627"></div>
+            <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="platinumdetails2024@gmail.com"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Service Area Text</label><input class="form-input" value="All of Massachusetts"></div>
+            <div class="form-group"><label class="form-label">Google Reviews URL</label><input class="form-input" placeholder="https://g.page/..."></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Instagram URL</label><input class="form-input" placeholder="https://instagram.com/..."></div>
+            <div class="form-group"><label class="form-label">TikTok URL</label><input class="form-input" placeholder="https://tiktok.com/..."></div>
+          </div>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-cyan">Save Contact Page</button></div>
+      </div>
+    </div>
+
+    <!-- MESSAGING -->
+    <div class="page" id="page-messaging">
+      <div class="page-header"><div class="page-title"><span>Messaging</span></div><div class="page-sub">Automated SMS via Twilio</div></div>
+      <div class="card"><div class="card-body"><div class="placeholder-page"><div class="placeholder-icon">💬</div><div class="placeholder-title">SMS Automation Coming Soon</div><div class="placeholder-sub">Automated appointment reminders, follow-ups & review requests</div></div></div></div>
+    </div>
+
+    <!-- ACTIVITY LOG -->
+    <div class="page" id="page-activity">
+      <div class="page-header"><div class="page-title"><span>Activity</span> Log</div><div class="page-sub">Recent actions by managers</div></div>
+      <div class="card"><div class="card-body">
+        <div class="activity-item"><div class="activity-dot" style="background:var(--cyan)"></div><div class="activity-content"><div class="activity-text"><strong>Marcus</strong> <span class="action">updated homepage</span> — Changed hero subtitle text</div><div class="activity-time">Today, 9:45 AM</div></div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:var(--green)"></div><div class="activity-content"><div class="activity-text"><strong>Jake</strong> <span class="action">added gallery photo</span> — Bentley Continental detail</div><div class="activity-time">Today, 9:30 AM</div></div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:var(--cyan)"></div><div class="activity-content"><div class="activity-text"><strong>Marcus</strong> <span class="action">added a cost</span> — Ceramic coating supply ($185)</div><div class="activity-time">Today, 9:14 AM</div></div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:var(--green)"></div><div class="activity-content"><div class="activity-text"><strong>Jake</strong> <span class="action">confirmed booking</span> — Sarah Chen, Interior Clean</div><div class="activity-time">Today, 8:42 AM</div></div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:var(--amber)"></div><div class="activity-content"><div class="activity-text"><strong>Marcus</strong> <span class="action">edited service</span> — Full Detail price updated to $189</div><div class="activity-time">Yesterday, 4:15 PM</div></div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:var(--purple)"></div><div class="activity-content"><div class="activity-text"><strong>Jake</strong> <span class="action">toggled review visibility</span> — Mike Warren review now visible</div><div class="activity-time">Yesterday, 3:30 PM</div></div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:var(--blue)"></div><div class="activity-content"><div class="activity-text"><strong>Marcus</strong> <span class="action">updated schedule</span> — Saturday hours changed to 9AM-2PM</div><div class="activity-time">Yesterday, 2:00 PM</div></div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY MODAL -->
+<div class="modal-overlay" id="day-modal" onclick="if(event.target===this)closeDayModal()">
+  <div class="modal"><div class="modal-head"><span class="modal-title" id="day-modal-title">March 4, 2026</span><button class="modal-close" onclick="closeDayModal()">✕</button></div><div class="modal-body" id="day-modal-body"></div></div>
+</div>
+
+<!-- ADD COST MODAL -->
+<div class="modal-overlay" id="cost-modal" onclick="if(event.target===this)closeCostModal()">
+  <div class="modal" style="width:440px">
+    <div class="modal-head"><span class="modal-title">Add Expense</span><button class="modal-close" onclick="closeCostModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label class="form-label">Expense Type</label><input class="form-input" placeholder="e.g. Supplies, Gas"></div><div class="form-group"><label class="form-label">Amount ($)</label><input class="form-input" type="number" placeholder="0.00"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Spent By</label><select class="form-input"><option>Marcus</option><option>Jake</option></select></div><div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date"></div></div>
+      <div class="form-group" style="margin-top:4px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2)"><input type="checkbox" style="accent-color:var(--cyan)"> Mark as recurring (monthly)</label></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeCostModal()">Cancel</button><button class="btn btn-cyan" onclick="closeCostModal()">Add Expense</button></div>
+  </div>
+</div>
+
+<!-- ADD SERVICE MODAL -->
+<div class="modal-overlay" id="service-modal" onclick="if(event.target===this)closeServiceModal()">
+  <div class="modal" style="width:600px">
+    <div class="modal-head"><span class="modal-title">Add Service</span><button class="modal-close" onclick="closeServiceModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:12px"><label class="form-label">Service Name</label><input class="form-input" placeholder="e.g. Platinum Package — Full Detail"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Price ($)</label><input class="form-input" type="number" placeholder="0.00"></div>
+        <div class="form-group"><label class="form-label">Sale Price ($ optional)</label><input class="form-input" type="number" placeholder="Leave blank if no sale"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Duration (minutes)</label><input class="form-input" type="number" step="15" placeholder="e.g. 150"></div>
+        <div class="form-group"><label class="form-label">Buffer Time</label><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);padding:10px 0">+ 60 min travel buffer (auto)</div></div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px"><label class="form-label">Description</label><textarea class="form-input" rows="2" placeholder="Brief description shown on service card"></textarea></div>
+      <div class="form-group" style="margin-bottom:12px"><label class="form-label">What's Included (one item per line)</label><textarea class="form-input" rows="5" placeholder="Vacuum Interior & Trunk&#10;Condition Leather & Plastics&#10;Clean Windows Inside & Out&#10;Deep Clean Seats & Carpets"></textarea></div>
+      <div class="form-group" style="margin-bottom:12px"><label class="form-label">Cover Image</label>
+        <div class="upload-zone" style="padding:16px"><div class="upload-zone-icon" style="font-size:20px">📷</div><div class="upload-zone-text">Upload cover image</div></div>
+      </div>
+
+      <!-- ADD-ONS -->
+      <div style="margin-bottom:12px">
+        <div class="form-label" style="margin-bottom:8px">Add-Ons (optional)</div>
+        <div id="addon-list">
+          <div class="addon-editor-row">
+            <div class="form-group"><label class="form-label">Name</label><input class="form-input" placeholder="e.g. Engine Bay Cleaning"></div>
+            <div class="form-group"><label class="form-label">Price ($)</label><input class="form-input" type="number" placeholder="0"></div>
+            <div style="padding-bottom:4px"><button class="btn btn-red btn-sm">✕</button></div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="addAddonRow()">+ Add Add-On</button>
+      </div>
+
+      <div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2)"><input type="checkbox" checked style="accent-color:var(--cyan)"> Show on customer website</label></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeServiceModal()">Cancel</button><button class="btn btn-cyan" onclick="closeServiceModal()">Add Service</button></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ============ SUPABASE ============
+const SUPABASE_URL = 'https://yctegcnochrduriosyqa.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljdGVnY25vY2hyZHVyaW9zeXFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTMwMTgsImV4cCI6MjA4ODIyOTAxOH0.9rjDzD9Ya4PJvEF6ukOdXxfgX5lr4xp58-NiRfsT9MY';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+
+// Check for existing session on load
+(async function checkSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    loginSuccess(session.user);
+  }
+})();
+
+async function attemptLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-pass').value;
+  const btn = document.getElementById('login-btn-el');
+  const err = document.getElementById('login-error');
+
+  if (!email || !password) { err.textContent = 'Enter email and password.'; return; }
+
+  btn.textContent = 'SIGNING IN...';
+  btn.disabled = true;
+  err.textContent = '';
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    err.textContent = error.message || 'Invalid credentials. Try again.';
+    btn.textContent = 'SIGN IN';
+    btn.disabled = false;
+    return;
+  }
+
+  loginSuccess(data.user);
+}
+
+function loginSuccess(user) {
+  currentUser = user;
+  const displayName = user.user_metadata?.display_name || user.email.split('@')[0];
+  const initial = displayName.charAt(0).toUpperCase();
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  document.getElementById('user-avatar').textContent = initial;
+  document.getElementById('user-display-name').textContent = displayName;
+  document.getElementById('dash-name').textContent = displayName;
+  setDashDate();
+  buildCalendar();
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
+document.getElementById('login-email').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
+
+async function logout() {
+  await supabase.auth.signOut();
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').textContent = '';
+  currentUser = null;
+}
+
+function setDashDate() {
+  const d = new Date();
+  document.getElementById('dash-date').textContent = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }).toUpperCase();
+  document.getElementById('dash-today-label').textContent = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+// ============ NAV ============
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if(el) el.classList.add('active');
+}
+
+// ============ WEBSITE TABS ============
+function showWebTab(id, el) {
+  document.querySelectorAll('.web-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('wp-' + id).classList.add('active');
+  document.querySelectorAll('.web-tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+}
+
+// ============ CALENDAR ============
+const MOCK_BOOKINGS = {
+  '2026-03-04': [
+    { time:'8:00 AM', name:'Marcus Rivera', service:'Full Detail', phone:'(617) 555-0134', address:'42 Oak Street, Boston MA', color:'var(--cyan)' },
+    { time:'10:30 AM', name:'Sarah Chen', service:'Interior Clean', phone:'(617) 555-0291', address:'18 Maple Ave, Cambridge MA', color:'var(--green)' },
+    { time:'1:00 PM', name:'Jake Thompson', service:'Paint Correction', phone:'(508) 555-0177', address:'77 Pine Road, Quincy MA', color:'var(--amber)' },
+    { time:'3:30 PM', name:'Emily Dawson', service:'Exterior Wash + Wax', phone:'(781) 555-0423', address:'5 Birch Lane, Brookline MA', color:'var(--blue)' }
+  ],
+  '2026-03-07': [
+    { time:'9:00 AM', name:'David Park', service:'Interior Clean', phone:'(617) 555-0311', address:'88 Harvard St, Allston MA', color:'var(--green)' },
+    { time:'12:00 PM', name:'Nina Ali', service:'Full Detail', phone:'(781) 555-0199', address:'62 Summer St, Weymouth MA', color:'var(--cyan)' },
+    { time:'3:00 PM', name:'Tom Reeves', service:'Exterior Wash + Wax', phone:'(617) 555-0455', address:'15 Winter St, Dorchester MA', color:'var(--blue)' }
+  ],
+  '2026-03-10': [
+    { time:'8:00 AM', name:'Angela Wu', service:'Ceramic Coating', phone:'(508) 555-0723', address:'201 Main St, Framingham MA', color:'var(--purple)' },
+    { time:'2:00 PM', name:'Derek Lawson', service:'Paint Correction', phone:'(617) 555-0188', address:'44 Court St, Boston MA', color:'var(--amber)' }
+  ],
+  '2026-03-15': [
+    { time:'9:00 AM', name:'Marcus Rivera', service:'Interior Clean', phone:'(617) 555-0134', address:'42 Oak Street, Boston MA', color:'var(--green)' },
+    { time:'1:00 PM', name:'Emily Dawson', service:'Ceramic Coating', phone:'(781) 555-0423', address:'5 Birch Lane, Brookline MA', color:'var(--purple)' }
+  ]
+};
+
+let calYear = 2026, calMonth = 2;
+
+function buildCalendar() {
+  const grid = document.getElementById('cal-grid');
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent = months[calMonth] + ' ' + calYear;
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date();
+  let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => '<div class="cal-day-label">'+d+'</div>').join('');
+  for (let i = 0; i < firstDay; i++) html += '<div class="cal-cell empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const bookings = MOCK_BOOKINGS[dateStr] || [];
+    const isToday = (today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d);
+    let dots = bookings.slice(0,4).map(b => '<div class="cal-dot" style="background:'+b.color+'"></div>').join('');
+    let count = bookings.length ? '<div class="cal-booking-count">'+bookings.length+' appt'+(bookings.length>1?'s':'')+'</div>' : '';
+    html += '<div class="cal-cell'+(isToday?' today':'')+'" onclick="openDayModal(\''+dateStr+'\')"><div class="cal-num">'+d+'</div><div class="cal-dots">'+dots+'</div>'+count+'</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function calPrev() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} buildCalendar(); }
+function calNext() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} buildCalendar(); }
+
+function openDayModal(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  document.getElementById('day-modal-title').textContent = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const bookings = MOCK_BOOKINGS[dateStr] || [];
+  const body = document.getElementById('day-modal-body');
+  if (!bookings.length) {
+    body.innerHTML = '<div style="text-align:center;padding:30px"><div style="font-size:32px;opacity:0.3;margin-bottom:10px">📅</div><div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--text3);letter-spacing:.12em">NO BOOKINGS THIS DAY</div></div>';
+  } else {
+    body.innerHTML = bookings.map(b => '<div style="padding:14px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid '+b.color+';border-radius:6px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="font-size:14px;font-weight:600;margin-bottom:2px">'+b.name+'</div><div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--cyan)">'+b.service+'</div></div><div style="font-family:\'Share Tech Mono\',monospace;font-size:11px;color:var(--text2)">'+b.time+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--text2)"><div><span style="color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:8px;letter-spacing:.1em">PHONE</span><br>'+b.phone+'</div><div><span style="color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:8px;letter-spacing:.1em">ADDRESS</span><br>'+b.address+'</div></div><div style="margin-top:10px;display:flex;gap:6px"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-red btn-sm">Cancel</button></div></div>').join('');
+  }
+  document.getElementById('day-modal').classList.add('open');
+}
+function closeDayModal() { document.getElementById('day-modal').classList.remove('open'); }
+
+// ============ MODALS ============
+function openAddCost() { document.getElementById('cost-modal').classList.add('open'); }
+function closeCostModal() { document.getElementById('cost-modal').classList.remove('open'); }
+function openAddService() { document.getElementById('service-modal').classList.add('open'); }
+function closeServiceModal() { document.getElementById('service-modal').classList.remove('open'); }
+function openOverrideModal() { alert('Override modal — will be built in final version'); }
+
+// ============ ADDON ROWS ============
+function addAddonRow() {
+  const list = document.getElementById('addon-list');
+  const row = document.createElement('div');
+  row.className = 'addon-editor-row';
+  row.innerHTML = '<div class="form-group"><label class="form-label">Name</label><input class="form-input" placeholder="e.g. Pet Hair Removal"></div><div class="form-group"><label class="form-label">Price ($)</label><input class="form-input" type="number" placeholder="0"></div><div style="padding-bottom:4px"><button class="btn btn-red btn-sm" onclick="this.closest(\'.addon-editor-row\').remove()">✕</button></div>';
+  list.appendChild(row);
+}
+
+// ============ BA PAIR ============
+let baPairCount = 2;
+function addBAPair() {
+  baPairCount++;
+  const list = document.getElementById('ba-pairs-list');
+  const pair = document.createElement('div');
+  pair.className = 'ba-pair';
+  pair.innerHTML = '<div class="ba-pair-header"><span class="ba-pair-title">Pair '+baPairCount+'</span><button class="btn btn-red btn-sm" onclick="this.closest(\'.ba-pair\').remove()">Remove</button></div><div class="form-group" style="grid-column:1/-1;margin-bottom:8px"><label class="form-label">Title (optional)</label><input class="form-input" placeholder="e.g. Detail Title"></div><div class="ba-upload"><div style="font-size:20px;opacity:0.2">📷</div><div class="ba-upload-label">Before Photo</div></div><div class="ba-upload"><div style="font-size:20px;opacity:0.2">✨</div><div class="ba-upload-label">After Photo</div></div>';
+  list.appendChild(pair);
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') { closeDayModal(); closeCostModal(); closeServiceModal(); } });
+</script>
+</body>
+</html>
