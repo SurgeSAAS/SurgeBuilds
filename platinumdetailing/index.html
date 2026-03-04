@@ -1098,9 +1098,12 @@ function getTotal() {
 }
 
 // ===== CALENDAR =====
-function openCalendar() {
+async function openCalendar() {
   selectedDate = null;
   selectedTime = null;
+  const now = new Date();
+  miniCalYear = now.getFullYear();
+  miniCalMonth = now.getMonth();
   document.getElementById('step-date').style.display = 'block';
   document.getElementById('step-time').style.display = 'none';
   document.getElementById('step-form').style.display = 'none';
@@ -1109,9 +1112,9 @@ function openCalendar() {
   document.getElementById('cal-title').textContent = 'Select Date & Time';
   document.getElementById('btn-to-time').disabled = true;
   document.getElementById('btn-to-time').textContent = 'Select a Date to Continue';
-  miniCalYear = 2026; miniCalMonth = 2;
-  buildMiniCal();
   document.getElementById('cal-overlay').classList.add('open');
+  await loadScheduleData();
+  buildMiniCal();
 }
 
 function closeCalendar() {
@@ -1120,10 +1123,75 @@ function closeCalendar() {
   document.body.style.overflow = '';
 }
 
-// Available days (mock — would come from schedule settings)
-const AVAILABLE_DAYS = [1,2,3,4,5,6]; // Mon-Sat (0=Sun)
-const BOOKED_SLOTS = { '2026-03-04': ['8:00 AM','10:30 AM','1:00 PM','3:30 PM'], '2026-03-07': ['9:00 AM','12:00 PM'] };
-const ALL_SLOTS = ['8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM'];
+// ============ SUPABASE ============
+const _SB_URL = 'https://zvrypvsndhkirxockflg.supabase.co';
+const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2cnlwdnNuZGhraXJ4b2NrZmxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4ODMyMDQsImV4cCI6MjA4NzQ1OTIwNH0.N5a2GHbqEoEqzqjU8Atvmbcjx6079Wez4AaXamDPF2M';
+
+async function sbFetch(path, opts={}) {
+  const res = await fetch(_SB_URL + '/rest/v1/' + path, {
+    headers: { 'apikey': _SB_KEY, 'Authorization': 'Bearer ' + _SB_KEY, 'Content-Type': 'application/json', 'Prefer': opts.prefer||'return=representation', ...opts.headers },
+    method: opts.method||'GET',
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  });
+  if (!res.ok) return null;
+  try { return await res.json(); } catch { return null; }
+}
+
+// Live schedule & availability
+let _schedule = null; // day_of_week -> {is_open, open_time, close_time}
+let _overrides = {};  // date -> override row
+let _bookedSlots = {}; // date -> [times]
+
+async function loadScheduleData() {
+  const [sched, overrides] = await Promise.all([
+    sbFetch('schedule?select=*&order=day_of_week'),
+    sbFetch('schedule_overrides?select=*&date=gte.' + new Date().toISOString().split('T')[0])
+  ]);
+  _schedule = {};
+  (sched||[]).forEach(r => { _schedule[r.day_of_week] = r; });
+  _overrides = {};
+  (overrides||[]).forEach(r => { _overrides[r.date] = r; });
+}
+
+async function loadBookedSlots(dateStr) {
+  if (_bookedSlots[dateStr] !== undefined) return _bookedSlots[dateStr];
+  const data = await sbFetch(`bookings?select=time&date=eq.${dateStr}&status=neq.cancelled`);
+  _bookedSlots[dateStr] = (data||[]).map(b => b.time);
+  return _bookedSlots[dateStr];
+}
+
+function isDateAvailable(dateStr) {
+  const date = new Date(dateStr + 'T12:00:00');
+  const dow = date.getDay();
+  if (_overrides[dateStr]) {
+    return _overrides[dateStr].is_open;
+  }
+  if (!_schedule || !_schedule[dow]) return dow >= 1 && dow <= 6; // fallback Mon-Sat
+  return _schedule[dow].is_open;
+}
+
+function getSlotsForDate(dateStr) {
+  const date = new Date(dateStr + 'T12:00:00');
+  const dow = date.getDay();
+  let openTime = '08:00', closeTime = '17:00';
+  if (_overrides[dateStr] && _overrides[dateStr].is_open) {
+    openTime = _overrides[dateStr].open_time || openTime;
+    closeTime = _overrides[dateStr].close_time || closeTime;
+  } else if (_schedule && _schedule[dow]) {
+    openTime = _schedule[dow].open_time || openTime;
+    closeTime = _schedule[dow].close_time || closeTime;
+  }
+  const slots = [];
+  let [h, m] = openTime.split(':').map(Number);
+  const [eh, em] = closeTime.split(':').map(Number);
+  while (h < eh || (h === eh && m < em)) {
+    const ampm = h < 12 ? 'AM' : 'PM';
+    const displayH = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    slots.push(`${displayH}:${String(m).padStart(2,'0')} ${ampm}`);
+    m += 60; if (m >= 60) { h += Math.floor(m/60); m = m % 60; }
+  }
+  return slots;
+}
 
 function buildMiniCal() {
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -1138,10 +1206,9 @@ function buildMiniCal() {
 
   for (let d = 1; d <= daysInMonth; d++) {
     const date = new Date(miniCalYear, miniCalMonth, d);
-    const dayOfWeek = date.getDay();
     const dateStr = `${miniCalYear}-${String(miniCalMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const isAvailable = AVAILABLE_DAYS.includes(dayOfWeek) && !isPast;
+    const isAvailable = !isPast && isDateAvailable(dateStr);
     const isSelected = selectedDate === dateStr;
 
     let cls = 'mini-cal-cell';
@@ -1165,7 +1232,7 @@ function selectDate(dateStr) {
   document.getElementById('btn-to-time').textContent = 'Continue with ' + d.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
 }
 
-function goToTime() {
+async function goToTime() {
   document.getElementById('step-date').style.display = 'none';
   document.getElementById('step-time').style.display = 'block';
   document.getElementById('cal-step').textContent = 'Step 2 of 3 — Pick a time';
@@ -1173,9 +1240,20 @@ function goToTime() {
   document.getElementById('selected-date-label').textContent = d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
   document.getElementById('btn-to-form').disabled = true;
 
-  const booked = BOOKED_SLOTS[selectedDate] || [];
   const slotsEl = document.getElementById('time-slots');
-  slotsEl.innerHTML = ALL_SLOTS.map(slot => {
+  slotsEl.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px">Loading availability...</div>';
+
+  const [booked, slots] = await Promise.all([
+    loadBookedSlots(selectedDate),
+    Promise.resolve(getSlotsForDate(selectedDate))
+  ]);
+
+  if (!slots.length) {
+    slotsEl.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px">No available times for this date.</div>';
+    return;
+  }
+
+  slotsEl.innerHTML = slots.map(slot => {
     const taken = booked.includes(slot);
     return `<div class="time-slot${taken ? ' taken' : ''}" onclick="${taken ? '' : `selectTime('${slot}')`}">${slot}${taken ? ' · Booked' : ''}</div>`;
   }).join('');
@@ -1206,20 +1284,69 @@ function backToTime() {
   document.getElementById('cal-step').textContent = 'Step 2 of 3 — Pick a time';
 }
 
-function confirmBooking() {
+async function confirmBooking() {
+  const firstName = document.getElementById('f-first').value.trim();
+  const lastName = document.getElementById('f-last').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const address = document.getElementById('f-address').value.trim();
+  const vehicle = document.getElementById('f-vehicle').value.trim();
+  const notes = document.getElementById('f-notes').value.trim();
+
+  if (!firstName || !lastName || !phone || !address || !vehicle) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  const btn = document.querySelector('#step-form .btn-next');
+  btn.textContent = 'Booking...';
+  btn.disabled = true;
+
+  const addonsData = selectedAddons.map(i => ({ name: currentService.addons[i].name, price: currentService.addons[i].price }));
+  const addonsTotal = addonsData.reduce((s,a) => s + a.price, 0);
+  const totalPrice = getTotal();
+
+  const booking = {
+    customer_name: `${firstName} ${lastName}`,
+    customer_email: email || null,
+    customer_phone: phone,
+    customer_address: address,
+    service_name: currentService.name,
+    service_price: currentService.price,
+    addons: addonsData,
+    addons_total: addonsTotal,
+    total_price: totalPrice,
+    date: selectedDate,
+    time: selectedTime,
+    status: 'confirmed',
+    notes: notes || null
+  };
+
+  const result = await sbFetch('bookings', {
+    method: 'POST',
+    body: booking,
+    prefer: 'return=minimal'
+  });
+
+  btn.textContent = 'Confirm Booking';
+  btn.disabled = false;
+
+  // Clear cached booked slots for this date so it refreshes
+  delete _bookedSlots[selectedDate];
+
   const d = new Date(selectedDate + 'T12:00:00');
-  const addonsText = selectedAddons.map(i => currentService.addons[i].name).join(', ') || 'None';
+  const addonsText = addonsData.map(a => a.name).join(', ') || 'None';
 
   document.getElementById('confirm-details').innerHTML = `
     <div class="confirm-row"><span class="confirm-label">Service</span><span class="confirm-val">${currentService.name}</span></div>
     <div class="confirm-row"><span class="confirm-label">Add-Ons</span><span class="confirm-val">${addonsText}</span></div>
     <div class="confirm-row"><span class="confirm-label">Date</span><span class="confirm-val">${d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</span></div>
     <div class="confirm-row"><span class="confirm-label">Time</span><span class="confirm-val">${selectedTime}</span></div>
-    <div class="confirm-row"><span class="confirm-label">Name</span><span class="confirm-val">${document.getElementById('f-first').value} ${document.getElementById('f-last').value}</span></div>
-    <div class="confirm-row"><span class="confirm-label">Phone</span><span class="confirm-val">${document.getElementById('f-phone').value}</span></div>
-    <div class="confirm-row"><span class="confirm-label">Address</span><span class="confirm-val">${document.getElementById('f-address').value}</span></div>
-    <div class="confirm-row"><span class="confirm-label">Vehicle</span><span class="confirm-val">${document.getElementById('f-vehicle').value}</span></div>
-    <div class="confirm-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:10px;"><span class="confirm-label">Total</span><span class="confirm-val" style="color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:16px;">$${getTotal()}</span></div>
+    <div class="confirm-row"><span class="confirm-label">Name</span><span class="confirm-val">${firstName} ${lastName}</span></div>
+    <div class="confirm-row"><span class="confirm-label">Phone</span><span class="confirm-val">${phone}</span></div>
+    <div class="confirm-row"><span class="confirm-label">Address</span><span class="confirm-val">${address}</span></div>
+    <div class="confirm-row"><span class="confirm-label">Vehicle</span><span class="confirm-val">${vehicle}</span></div>
+    <div class="confirm-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:10px;"><span class="confirm-label">Total</span><span class="confirm-val" style="color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:16px;">$${totalPrice}</span></div>
   `;
 
   document.getElementById('step-form').style.display = 'none';
@@ -1230,8 +1357,29 @@ function confirmBooking() {
 
 document.addEventListener('keydown', e => { if(e.key==='Escape') { closeCalendar(); closeDetail(); } });
 
+// ============ LOAD REAL SERVICES FROM SUPABASE ============
+async function loadLiveServices() {
+  const data = await sbFetch('services?select=*&active=eq.true&order=sort_order');
+  if (!data || !data.length) return;
+  const mapped = data.map(s => ({
+    id: s.id,
+    name: s.name,
+    desc: s.description || '',
+    price: s.price,
+    originalPrice: null,
+    sale: false,
+    duration: s.duration || '',
+    includes: [],
+    addons: (s.addons || []).map(a => ({ name: a.name, price: a.price }))
+  }));
+  SERVICES.length = 0;
+  mapped.forEach(s => SERVICES.push(s));
+  renderGrid();
+}
+
 // INIT
 renderGrid();
+loadLiveServices();
 </script>
 
 </div>

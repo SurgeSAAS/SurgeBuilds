@@ -724,15 +724,15 @@ Your car, our passion — experience the Platinum difference.</textarea>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============ SUPABASE ============
-const SUPABASE_URL = 'https://zvrypvsndhkirxockflg.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2cnlwdnNuZGhraXJ4b2NrZmxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4ODMyMDQsImV4cCI6MjA4NzQ1OTIwNH0.N5a2GHbqEoEqzqjU8Atvmbcjx6079Wez4AaXamDPF2M';
-const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL = 'https://yctegcnochrduriosyqa.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljdGVnY25vY2hyZHVyaW9zeXFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTMwMTgsImV4cCI6MjA4ODIyOTAxOH0.9rjDzD9Ya4PJvEF6ukOdXxfgX5lr4xp58-NiRfsT9MY';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 
 // Check for existing session on load
 (async function checkSession() {
-  const { data: { session } } = await _sb.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
   if (session) {
     loginSuccess(session.user);
   }
@@ -750,7 +750,7 @@ async function attemptLogin() {
   btn.disabled = true;
   err.textContent = '';
 
-  const { data, error } = await _sb.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     err.textContent = error.message || 'Invalid credentials. Try again.';
@@ -780,7 +780,7 @@ document.getElementById('login-pass').addEventListener('keydown', e => { if(e.ke
 document.getElementById('login-email').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
 
 async function logout() {
-  await _sb.auth.signOut();
+  await supabase.auth.signOut();
   document.getElementById('app').classList.remove('active');
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('login-email').value = '';
